@@ -39,6 +39,10 @@ description:   The Levenberg-Marquardt algorithm is an iterative
                program can only by distributed under the terms of the
                GPL.
 
+source-repository head
+  Type: darcs
+  Location: http://code.haskell.org/bindings-levmar
+
 extra-source-files: levmar-2.4/LICENSE
                   , levmar-2.4/*.h
                   , levmar-2.4/*.c
