@@ -48,8 +48,14 @@ import Foreign.Ptr     (Ptr, FunPtr)
 
 import qualified Bindings.LevMar as LMA_C
 
-type BoxConstraints    cr a = Ptr cr -> Ptr cr -> a
-type LinearConstraints cr a = Ptr cr -> Ptr cr -> CInt -> a
+type BoxConstraints    cr a =  Ptr cr -- |Lower bounds
+                            -> Ptr cr -- |Upper bounds
+                            -> a
+
+type LinearConstraints cr a =  Ptr cr -- |Constraints matrix
+                            -> Ptr cr -- |Right hand constraints vector
+                            -> CInt   -- |Number of constraints
+                            -> a
 
 type LevMarDif     cr = LMA_C.LevMarDif cr
 type LevMarDer     cr = FunPtr (LMA_C.Jacobian cr) -> LevMarDif cr
