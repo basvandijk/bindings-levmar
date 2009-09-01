@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// 
+//
 //  Levenberg - Marquardt non-linear minimization algorithm
 //  Copyright (C) 2004-05  Manolis Lourakis (lourakis at ics forth gr)
 //  Institute of Computer Science, Foundation for Research & Technology - Hellas
@@ -76,7 +76,7 @@ extern int TRTRI(char *uplo, char *diag, int *n, LM_REAL *a, int *lda, int *info
  *
  * The function accepts A, b and computes c, Y, Z. If b or c is NULL, c is not
  * computed. Also, Y can be NULL in which case it is not referenced.
- * The function returns LM_ERROR in case of error, A's computed rank if successful
+ * The function returns an error code (<0) in case of error or A's computed rank if successful.
  *
  */
 static int LMLEC_ELIM(LM_REAL *A, LM_REAL *b, LM_REAL *c, LM_REAL *Y, LM_REAL *Z, int m, int n)
@@ -91,8 +91,8 @@ int info, rank, *jpvt, tot_sz, mintmn, tm, tn;
 register int i, j, k;
 
   if(m>n){
-    fprintf(stderr, RCAT("matrix of constraints cannot have more rows than columns in", LMLEC_ELIM) "()!\n");
-    return LM_ERROR;
+    PRINT_ERROR(RCAT("matrix of constraints cannot have more rows than columns in", LMLEC_ELIM) "()!\n");
+    return LM_ERROR_CONSTRAINT_MATRIX_ROWS_GT_COLS;
   }
 
   tm=n; tn=m; // transpose dimensions
@@ -112,8 +112,8 @@ register int i, j, k;
   tot_sz=(a_sz + tau_sz + r_sz + worksz + Y_sz)*sizeof(LM_REAL) + jpvt_sz*sizeof(int); /* should be arranged in that order for proper doubles alignment */
   buf=(LM_REAL *)malloc(tot_sz); /* allocate a "big" memory chunk at once */
   if(!buf){
-    fprintf(stderr, RCAT("Memory allocation request failed in ", LMLEC_ELIM) "()\n");
-    return LM_ERROR;
+    PRINT_ERROR(RCAT("Memory allocation request failed in ", LMLEC_ELIM) "()\n");
+    return LM_ERROR_MEMORY_ALLOCATION_FAILURE;
   }
 
   a=buf;
@@ -142,13 +142,13 @@ register int i, j, k;
   /* error checking */
   if(info!=0){
     if(info<0){
-      fprintf(stderr, RCAT(RCAT("LAPACK error: illegal value for argument %d of ", GEQP3) " in ", LMLEC_ELIM) "()\n", -info);
+      PRINT_ERROR(RCAT(RCAT("LAPACK error: illegal value for argument %d of ", GEQP3) " in ", LMLEC_ELIM) "()\n", -info);
     }
     else if(info>0){
-      fprintf(stderr, RCAT(RCAT("unknown LAPACK error (%d) for ", GEQP3) " in ", LMLEC_ELIM) "()\n", info);
+      PRINT_ERROR(RCAT(RCAT("unknown LAPACK error (%d) for ", GEQP3) " in ", LMLEC_ELIM) "()\n", info);
     }
     free(buf);
-    return LM_ERROR;
+    return LM_ERROR_LAPACK_ERROR;
   }
   /* the upper triangular part of a now contains the upper triangle of the unpermuted R */
 
@@ -169,10 +169,10 @@ register int i, j, k;
     else break; /* diagonal is arranged in absolute decreasing order */
 
   if(rank<tn){
-    fprintf(stderr, RCAT("\nConstraints matrix in ",  LMLEC_ELIM) "() is not of full row rank (i.e. %d < %d)!\n"
+    PRINT_ERROR(RCAT("\nConstraints matrix in ",  LMLEC_ELIM) "() is not of full row rank (i.e. %d < %d)!\n"
             "Make sure that you do not specify redundant or inconsistent constraints.\n\n", rank, tn);
     free(buf);
-    return LM_ERROR;
+    return LM_ERROR_CONSTRAINT_MATRIX_NOT_FULL_ROW_RANK;
   }
 
   /* compute the permuted inverse transpose of R */
@@ -189,13 +189,13 @@ register int i, j, k;
   /* error checking */
   if(info!=0){
     if(info<0){
-      fprintf(stderr, RCAT(RCAT("LAPACK error: illegal value for argument %d of ", TRTRI) " in ", LMLEC_ELIM) "()\n", -info);
+      PRINT_ERROR(RCAT(RCAT("LAPACK error: illegal value for argument %d of ", TRTRI) " in ", LMLEC_ELIM) "()\n", -info);
     }
     else if(info>0){
-      fprintf(stderr, RCAT(RCAT("A(%d, %d) is exactly zero for ", TRTRI) " (singular matrix) in ", LMLEC_ELIM) "()\n", info, info);
+      PRINT_ERROR(RCAT(RCAT("A(%d, %d) is exactly zero for ", TRTRI) " (singular matrix) in ", LMLEC_ELIM) "()\n", info, info);
     }
     free(buf);
-    return LM_ERROR;
+    return LM_ERROR_LAPACK_ERROR;
   }
   /* then, transpose r in place */
   for(i=0; i<rank; ++i)
@@ -223,13 +223,13 @@ register int i, j, k;
   /* error checking */
   if(info!=0){
     if(info<0){
-      fprintf(stderr, RCAT(RCAT("LAPACK error: illegal value for argument %d of ", ORGQR) " in ", LMLEC_ELIM) "()\n", -info);
+      PRINT_ERROR(RCAT(RCAT("LAPACK error: illegal value for argument %d of ", ORGQR) " in ", LMLEC_ELIM) "()\n", -info);
     }
     else if(info>0){
-      fprintf(stderr, RCAT(RCAT("unknown LAPACK error (%d) for ", ORGQR) " in ", LMLEC_ELIM) "()\n", info);
+      PRINT_ERROR(RCAT(RCAT("unknown LAPACK error (%d) for ", ORGQR) " in ", LMLEC_ELIM) "()\n", info);
     }
     free(buf);
-    return LM_ERROR;
+    return LM_ERROR_LAPACK_ERROR;
   }
 
   /* compute Y=Q_1*R^-T*P^T. Y is tm x rank */
@@ -294,7 +294,7 @@ struct LMLEC_DATA *data=(struct LMLEC_DATA *)adata;
 int m;
 register int i, j, l;
 register LM_REAL sum, *aux1, *aux2;
-LM_REAL *c, *Z, *p, *jac; 
+LM_REAL *c, *Z, *p, *jac;
 
   m=mm+data->ncnstr;
   c=data->c;
@@ -363,7 +363,7 @@ LM_REAL *c, *Z, *p, *jac;
 #undef __MIN__
 
 
-/* 
+/*
  * This function is similar to LEVMAR_DER except that the minimization
  * is performed subject to the linear constraints A p=b, A is kxm, b kx1
  *
@@ -373,7 +373,7 @@ LM_REAL *c, *Z, *p, *jac;
  */
 int LEVMAR_LEC_DER(
   void (*func)(LM_REAL *p, LM_REAL *hx, int m, int n, void *adata), /* functional relation describing measurements. A p \in R^m yields a \hat{x} \in  R^n */
-  void (*jacf)(LM_REAL *p, LM_REAL *j, int m, int n, void *adata),  /* function to evaluate the Jacobian \part x / \part p */ 
+  void (*jacf)(LM_REAL *p, LM_REAL *j, int m, int n, void *adata),  /* function to evaluate the Jacobian \part x / \part p */
   LM_REAL *p,         /* I/O: initial parameter estimates. On output has the estimated solution */
   LM_REAL *x,         /* I: measurement vector. NULL implies a zero vector */
   int m,              /* I: parameter vector dimension (i.e. #unknowns) */
@@ -393,7 +393,7 @@ int LEVMAR_LEC_DER(
                       * info[6]=reason for terminating: 1 - stopped by small gradient J^T e
                       *                                 2 - stopped by small Dp
                       *                                 3 - stopped by itmax
-                      *                                 4 - singular matrix. Restart from current p with increased mu 
+                      *                                 4 - singular matrix. Restart from current p with increased mu
                       *                                 5 - no further error reduction is possible. Restart with increased mu
                       *                                 6 - stopped by small ||e||_2
                       *                                 7 - stopped by invalid (i.e. NaN or Inf) "func" values. This is a user error
@@ -415,22 +415,22 @@ int LEVMAR_LEC_DER(
   LM_REAL locinfo[LM_INFO_SZ];
 
   if(!jacf){
-    fprintf(stderr, RCAT("No function specified for computing the Jacobian in ", LEVMAR_LEC_DER)
+    PRINT_ERROR(RCAT("No function specified for computing the Jacobian in ", LEVMAR_LEC_DER)
       RCAT("().\nIf no such function is available, use ", LEVMAR_LEC_DIF) RCAT("() rather than ", LEVMAR_LEC_DER) "()\n");
-    return LM_ERROR;
+    return LM_ERROR_NO_JACOBIAN;
   }
 
   mm=m-k;
 
   if(n<mm){
-    fprintf(stderr, LCAT(LEVMAR_LEC_DER, "(): cannot solve a problem with fewer measurements + equality constraints [%d + %d] than unknowns [%d]\n"), n, k, m);
-    return LM_ERROR;
+    PRINT_ERROR(LCAT(LEVMAR_LEC_DER, "(): cannot solve a problem with fewer measurements + equality constraints [%d + %d] than unknowns [%d]\n"), n, k, m);
+    return LM_ERROR_TOO_FEW_MEASUREMENTS;
   }
 
   ptr=(LM_REAL *)malloc((2*m + m*mm + n*m + mm)*sizeof(LM_REAL));
   if(!ptr){
-    fprintf(stderr, LCAT(LEVMAR_LEC_DER, "(): memory allocation request failed\n"));
-    return LM_ERROR;
+    PRINT_ERROR(LCAT(LEVMAR_LEC_DER, "(): memory allocation request failed\n"));
+    return LM_ERROR_MEMORY_ALLOCATION_FAILURE;
   }
   data.p=p;
   p0=ptr;
@@ -444,9 +444,9 @@ int LEVMAR_LEC_DER(
   data.adata=adata;
 
   ret=LMLEC_ELIM(A, b, data.c, NULL, Z, k, m); // compute c, Z
-  if(ret==LM_ERROR){
+  if(ret<0){
     free(ptr);
-    return LM_ERROR;
+    return ret;
   }
 
   /* compute pp s.t. p = c + Z*pp or (Z^T Z)*pp=Z^T*(p-c)
@@ -471,7 +471,7 @@ int LEVMAR_LEC_DER(
     for(j=0, tmp=data.c[i]; j<mm; ++j)
       tmp+=Zimm[j]*pp[j]; // tmp+=Z[i*mm+j]*pp[j];
     if(FABS(tmp-p0[i])>LM_CNST(1E-03))
-      fprintf(stderr, RCAT("Warning: component %d of starting point not feasible in ", LEVMAR_LEC_DER) "()! [%.10g reset to %.10g]\n",
+      PRINT_ERROR(RCAT("Warning: component %d of starting point not feasible in ", LEVMAR_LEC_DER) "()! [%.10g reset to %.10g]\n",
                       i, p0[i], tmp);
   }
 
@@ -515,7 +515,7 @@ int LEVMAR_LEC_DIF(
                        * scale factor for initial \mu, stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2 and
                        * the step used in difference approximation to the Jacobian. Set to NULL for defaults to be used.
                        * If \delta<0, the Jacobian is approximated with central differences which are more accurate
-                       * (but slower!) compared to the forward differences employed by default. 
+                       * (but slower!) compared to the forward differences employed by default.
                        */
   LM_REAL info[LM_INFO_SZ],
 					           /* O: information regarding the minimization. Set to NULL if don't care
@@ -525,7 +525,7 @@ int LEVMAR_LEC_DIF(
                       * info[6]=reason for terminating: 1 - stopped by small gradient J^T e
                       *                                 2 - stopped by small Dp
                       *                                 3 - stopped by itmax
-                      *                                 4 - singular matrix. Restart from current p with increased mu 
+                      *                                 4 - singular matrix. Restart from current p with increased mu
                       *                                 5 - no further error reduction is possible. Restart with increased mu
                       *                                 6 - stopped by small ||e||_2
                       *                                 7 - stopped by invalid (i.e. NaN or Inf) "func" values. This is a user error
@@ -549,14 +549,14 @@ int LEVMAR_LEC_DIF(
   mm=m-k;
 
   if(n<mm){
-    fprintf(stderr, LCAT(LEVMAR_LEC_DIF, "(): cannot solve a problem with fewer measurements + equality constraints [%d + %d] than unknowns [%d]\n"), n, k, m);
-    return LM_ERROR;
+    PRINT_ERROR(LCAT(LEVMAR_LEC_DIF, "(): cannot solve a problem with fewer measurements + equality constraints [%d + %d] than unknowns [%d]\n"), n, k, m);
+    return LM_ERROR_TOO_FEW_MEASUREMENTS;
   }
 
   ptr=(LM_REAL *)malloc((2*m + m*mm + mm)*sizeof(LM_REAL));
   if(!ptr){
-    fprintf(stderr, LCAT(LEVMAR_LEC_DIF, "(): memory allocation request failed\n"));
-    return LM_ERROR;
+    PRINT_ERROR(LCAT(LEVMAR_LEC_DIF, "(): memory allocation request failed\n"));
+    return LM_ERROR_MEMORY_ALLOCATION_FAILURE;
   }
   data.p=p;
   p0=ptr;
@@ -570,9 +570,9 @@ int LEVMAR_LEC_DIF(
   data.adata=adata;
 
   ret=LMLEC_ELIM(A, b, data.c, NULL, Z, k, m); // compute c, Z
-  if(ret==LM_ERROR){
+  if(ret<0){
     free(ptr);
-    return LM_ERROR;
+    return ret;
   }
 
   /* compute pp s.t. p = c + Z*pp or (Z^T Z)*pp=Z^T*(p-c)
@@ -597,7 +597,7 @@ int LEVMAR_LEC_DIF(
     for(j=0, tmp=data.c[i]; j<mm; ++j)
       tmp+=Zimm[j]*pp[j]; // tmp+=Z[i*mm+j]*pp[j];
     if(FABS(tmp-p0[i])>LM_CNST(1E-03))
-      fprintf(stderr, RCAT("Warning: component %d of starting point not feasible in ", LEVMAR_LEC_DIF) "()! [%.10g reset to %.10g]\n",
+      PRINT_ERROR(RCAT("Warning: component %d of starting point not feasible in ", LEVMAR_LEC_DIF) "()! [%.10g reset to %.10g]\n",
                       i, p0[i], tmp);
   }
 
@@ -619,9 +619,9 @@ int LEVMAR_LEC_DIF(
 
     hx=(LM_REAL *)malloc((2*n+n*m)*sizeof(LM_REAL));
     if(!hx){
-      fprintf(stderr, LCAT(LEVMAR_LEC_DIF, "(): memory allocation request failed\n"));
+      PRINT_ERROR(LCAT(LEVMAR_LEC_DIF, "(): memory allocation request failed\n"));
       free(ptr);
-      return LM_ERROR;
+      return LM_ERROR_MEMORY_ALLOCATION_FAILURE;
     }
 
     wrk=hx+n;

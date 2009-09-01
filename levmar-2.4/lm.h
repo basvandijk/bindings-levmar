@@ -1,6 +1,6 @@
-/* 
+/*
 ////////////////////////////////////////////////////////////////////////////////////
-// 
+//
 //  Prototypes and definitions for the Levenberg - Marquardt minimization algorithm
 //  Copyright (C) 2004  Manolis Lourakis (lourakis at ics forth gr)
 //  Institute of Computer Science, Foundation for Research & Technology - Hellas
@@ -34,7 +34,7 @@
  * non-reentrant and is not safe in a shared memory multiprocessing environment.
  * Bellow, this option is turned on only when not compiling with OpenMP.
  */
-#if !defined(_OPENMP) 
+#if !defined(_OPENMP)
 #define LINSOLVERS_RETAIN_MEMORY /* comment this if you don't want routines in Axb.c retain working memory between calls */
 #endif
 
@@ -44,6 +44,9 @@
 #define LM_DBL_PREC  /* comment this if you don't want the double precision routines to be compiled */
 #define LM_SNGL_PREC /* comment this if you don't want the single precision routines to be compiled */
 
+/* Undefine the following if you don't want errors to be printed.*/
+/* #define ENABLE_PRINT_ERROR */
+
 /****************** End of configuration options, no changes necessary beyond this point ******************/
 
 
@@ -51,6 +54,24 @@
 extern "C" {
 #endif
 
+#ifdef ENABLE_PRINT_ERROR
+ #define PRINT_ERROR(...) (fprintf(stderr, __VA_ARGS__))
+#else
+ #define PRINT_ERROR(...)
+#endif
+
+enum lmerror
+{ LM_ERROR_LAPACK_ERROR                        = -1
+, LM_ERROR_NO_JACOBIAN                         = -2
+, LM_ERROR_NO_BOX_CONSTRAINTS                  = -3
+, LM_ERROR_FAILED_BOX_CHECK                    = -4
+, LM_ERROR_MEMORY_ALLOCATION_FAILURE           = -5
+, LM_ERROR_CONSTRAINT_MATRIX_ROWS_GT_COLS      = -6
+, LM_ERROR_CONSTRAINT_MATRIX_NOT_FULL_ROW_RANK = -7
+, LM_ERROR_TOO_FEW_MEASUREMENTS                = -8
+, LM_ERROR_SINGULAR_MATRIX                     = -9
+, LM_ERROR_SUM_OF_SQUARES_NOT_FINITE           = -10
+};
 
 #define FABS(x) (((x)>=0.0)? (x) : -(x))
 
@@ -80,7 +101,6 @@ extern "C" {
 
 #define LM_OPTS_SZ    	 5 /* max(4, 5) */
 #define LM_INFO_SZ    	 10
-#define LM_ERROR         -1
 #define LM_INIT_MU    	 1E-03
 #define LM_STOP_THRESH	 1E-17
 #define LM_DIFF_DELTA    1E-06
@@ -103,7 +123,7 @@ extern int dlevmar_dif(
 /* box-constrained minimization */
 extern int dlevmar_bc_der(
        void (*func)(double *p, double *hx, int m, int n, void *adata),
-       void (*jacf)(double *p, double *j, int m, int n, void *adata),  
+       void (*jacf)(double *p, double *j, int m, int n, void *adata),
        double *p, double *x, int m, int n, double *lb, double *ub,
        int itmax, double *opts, double *info, double *work, double *covar, void *adata);
 
@@ -158,7 +178,7 @@ extern int slevmar_dif(
 /* box-constrained minimization */
 extern int slevmar_bc_der(
        void (*func)(float *p, float *hx, int m, int n, void *adata),
-       void (*jacf)(float *p, float *j, int m, int n, void *adata),  
+       void (*jacf)(float *p, float *j, int m, int n, void *adata),
        float *p, float *x, int m, int n, float *lb, float *ub,
        int itmax, float *opts, float *info, float *work, float *covar, void *adata);
 

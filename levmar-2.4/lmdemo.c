@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// 
+//
 //  Demonstration driver program for the Levenberg - Marquardt minimization
 //  algorithm
 //  Copyright (C) 2004-05  Manolis Lourakis (lourakis at ics forth gr)
@@ -18,9 +18,9 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-/******************************************************************************** 
+/********************************************************************************
  * Levenberg-Marquardt minimization demo driver. Only the double precision versions
- * are tested here. See the Meyer case for an example of verifying the Jacobian 
+ * are tested here. See the Meyer case for an example of verifying the Jacobian
  ********************************************************************************/
 
 #include <stdio.h>
@@ -175,7 +175,7 @@ double theta;
      theta=atan(p[1]/p[0])/(2.0*M_PI) + 0.5;
   else if(0.0<p[0])
      theta=atan(p[1]/p[0])/(2.0*M_PI);
-  else 
+  else
     theta=(p[1]>=0)? 0.25 : -0.25;
 
   x[0]=10.0*(p[2] - 10.0*theta);
@@ -719,9 +719,9 @@ char *probname[]={
       //16; // Schittkowski modified problem 235
       //17; // Boggs & Tolle modified problem #7
 #endif /* HAVE_LAPACK */
-				
+
   switch(problem){
-  default: fprintf(stderr, "unknown problem specified (#%d)! Note that some minimization problems require LAPACK.\n", problem);
+  default: PRINT_ERROR("unknown problem specified (#%d)! Note that some minimization problems require LAPACK.\n", problem);
            exit(1);
     break;
   case 0:
@@ -772,7 +772,7 @@ char *probname[]={
    { double *work, *covar;
     work=malloc((LM_DIF_WORKSZ(m, n)+m*m)*sizeof(double));
     if(!work){
-    	fprintf(stderr, "memory allocation request failed in main()\n");
+    	PRINT_ERROR("memory allocation request failed in main()\n");
       exit(1);
     }
     covar=work+LM_DIF_WORKSZ(m, n);
@@ -794,7 +794,7 @@ char *probname[]={
 /*
    {
     double err[16];
-    dlevmar_chkjac(meyer, jacmeyer, p, m, n, NULL, err); 
+    dlevmar_chkjac(meyer, jacmeyer, p, m, n, NULL, err);
     for(i=0; i<n; ++i) printf("gradient %d, err %g\n", i, err[i]);
    }
 */
@@ -1014,7 +1014,7 @@ char *probname[]={
     break;
 #endif /* HAVE_LAPACK */
   } /* switch */
-  
+
   printf("Results for %s:\n", probname[problem]);
   printf("Levenberg-Marquardt returned %d in %g iter, reason %g\nSolution: ", ret, info[5], info[6]);
   for(i=0; i<m; ++i)

@@ -1,5 +1,5 @@
 /* ////////////////////////////////////////////////////////////////////////////////
-// 
+//
 //  Matlab MEX file for the Levenberg - Marquardt minimization algorithm
 //  Copyright (C) 2007  Manolis Lourakis (lourakis at ics forth gr)
 //  Institute of Computer Science, Foundation for Research & Technology - Hellas
@@ -46,6 +46,8 @@
 #define MIN_CONSTRAINED_BC    1
 #define MIN_CONSTRAINED_LEC   2
 #define MIN_CONSTRAINED_BLEC  3
+
+#define ERROR_FAILED_FUNC_AND_JACOBIAN_CHECK -1
 
 struct mexdata {
   /* matlab names of the fitting function & its Jacobian */
@@ -94,12 +96,12 @@ mxArray *lhs[1];
 double *mp, *mx;
 register int i;
 struct mexdata *dat=(struct mexdata *)adata;
-    
+
   /* prepare to call matlab */
   mp=mxGetPr(dat->rhs[0]);
   for(i=0; i<m; ++i)
     mp[i]=p[i];
-    
+
   /* invoke matlab */
   mexCallMATLAB(1, lhs, dat->nrhs, dat->rhs, dat->fname);
 
@@ -119,7 +121,7 @@ double *mp;
 double *mj;
 register int i, k;
 struct mexdata *dat=(struct mexdata *)adata;
-    
+
   /* prepare to call matlab */
   mp=mxGetPr(dat->rhs[0]);
   for(i=0; i<m; ++i)
@@ -127,8 +129,8 @@ struct mexdata *dat=(struct mexdata *)adata;
 
   /* invoke matlab */
   mexCallMATLAB(1, lhs, dat->nrhs, dat->rhs, dat->jacname);
-    
-  /* copy back results & cleanup. Note that the nxm Jacobian 
+
+  /* copy back results & cleanup. Note that the nxm Jacobian
    * computed by matlab should be transposed so that
    * levmar gets it in row major, as expected
    */
@@ -156,7 +158,7 @@ register int i, j;
   for(i=0; i<m; i++)
     for(j=0; j<n; j++)
       At[i*n+j]=A[i+j*m];
-  
+
   return At;
 }
 
@@ -177,12 +179,12 @@ double *mp;
   /* attempt to call the supplied func */
   i=mexCallMATLAB(1, lhs, dat->nrhs, dat->rhs, dat->fname);
   if(i){
-    fprintf(stderr, "levmar: error calling '%s'.\n", dat->fname);
+    PRINT_ERROR("levmar: error calling '%s'.\n", dat->fname);
     ret=1;
   }
   else if(!mxIsDouble(lhs[0]) || mxIsComplex(lhs[0]) || !(mxGetM(lhs[0])==1 || mxGetN(lhs[0])==1) ||
       __MAX__(mxGetM(lhs[0]), mxGetN(lhs[0]))!=n){
-    fprintf(stderr, "levmar: '%s' should produce a real vector with %d elements (got %d).\n",
+    PRINT_ERROR("levmar: '%s' should produce a real vector with %d elements (got %d).\n",
                     dat->fname, n, __MAX__(mxGetM(lhs[0]), mxGetN(lhs[0])));
     ret=1;
   }
@@ -193,16 +195,16 @@ double *mp;
     /* attempt to call the supplied jac  */
     i=mexCallMATLAB(1, lhs, dat->nrhs, dat->rhs, dat->jacname);
     if(i){
-      fprintf(stderr, "levmar: error calling '%s'.\n", dat->jacname);
+      PRINT_ERROR("levmar: error calling '%s'.\n", dat->jacname);
       ret=1;
     }
     else if(!mxIsDouble(lhs[0]) || mxIsComplex(lhs[0]) || mxGetM(lhs[0])!=n || mxGetN(lhs[0])!=m){
-      fprintf(stderr, "levmar: '%s' should produce a real %dx%d matrix (got %dx%d).\n",
+      PRINT_ERROR("levmar: '%s' should produce a real %dx%d matrix (got %dx%d).\n",
                       dat->jacname, n, m, mxGetM(lhs[0]), mxGetN(lhs[0]));
       ret=1;
     }
     else if(mxIsSparse(lhs[0])){
-      fprintf(stderr, "levmar: '%s' should produce a real dense matrix (got a sparse one).\n", dat->jacname);
+      PRINT_ERROR("levmar: '%s' should produce a real dense matrix (got a sparse one).\n", dat->jacname);
       ret=1;
     }
     /* delete the matrix created by matlab */
@@ -242,7 +244,7 @@ double *lb=NULL, *ub=NULL, *A=NULL, *b=NULL, *wghts=NULL, *covar=NULL;
     matlabFmtdErrMsgTxt("levmar: too many output arguments (max. 4, got %d).", nlhs);
   else if(nlhs<2)
     matlabFmtdErrMsgTxt("levmar: too few output arguments (min. 2, got %d).", nlhs);
-    
+
   /* note that in order to accommodate optional args, prhs & nrhs are adjusted accordingly below */
 
   /** func **/
@@ -281,10 +283,10 @@ double *lb=NULL, *ub=NULL, *A=NULL, *b=NULL, *wghts=NULL, *covar=NULL;
 
 #ifdef DEBUG
   fflush(stderr);
-  fprintf(stderr, "LEVMAR: %s analytic Jacobian\n", havejac? "with" : "no");
+  PRINT_ERROR("LEVMAR: %s analytic Jacobian\n", havejac? "with" : "no");
 #endif /* DEBUG */
 
-/* CHECK 
+/* CHECK
 if(!mxIsDouble(prhs[1]) || mxIsComplex(prhs[1]) || !(mxGetM(prhs[1])==1 && mxGetN(prhs[1])==1))
 */
 
@@ -293,7 +295,7 @@ if(!mxIsDouble(prhs[1]) || mxIsComplex(prhs[1]) || !(mxGetM(prhs[1])==1 && mxGet
   if(!mxIsDouble(prhs[1]) || mxIsComplex(prhs[1]) || !(mxGetM(prhs[1])==1 || mxGetN(prhs[1])==1))
     mexErrMsgTxt("levmar: p0 must be a real vector.");
   p0=mxGetPr(prhs[1]);
-  /* determine if we have a row or column vector and retrieve its 
+  /* determine if we have a row or column vector and retrieve its
    * size, i.e. the number of parameters
    */
   if(mxGetM(prhs[1])==1){
@@ -308,7 +310,7 @@ if(!mxIsDouble(prhs[1]) || mxIsComplex(prhs[1]) || !(mxGetM(prhs[1])==1 && mxGet
   p=mxMalloc(m*sizeof(double));
   for(i=0; i<m; ++i)
     p[i]=p0[i];
-    
+
   /** x **/
   /* the third required argument must be a real row or column vector */
   if(!mxIsDouble(prhs[2]) || mxIsComplex(prhs[2]) || !(mxGetM(prhs[2])==1 || mxGetN(prhs[2])==1))
@@ -321,7 +323,7 @@ if(!mxIsDouble(prhs[1]) || mxIsComplex(prhs[1]) || !(mxGetM(prhs[1])==1 && mxGet
   if(!mxIsDouble(prhs[3]) || mxIsComplex(prhs[3]) || mxGetM(prhs[3])!=1 || mxGetN(prhs[3])!=1)
     mexErrMsgTxt("levmar: itmax must be a scalar.");
   itmax=(int)mxGetScalar(prhs[3]);
-    
+
   /** opts **/
   /* the fifth required argument must be a real row or column vector */
   if(!mxIsDouble(prhs[4]) || mxIsComplex(prhs[4]) || (!(mxGetM(prhs[4])==1 || mxGetN(prhs[4])==1) &&
@@ -340,7 +342,7 @@ if(!mxIsDouble(prhs[1]) || mxIsComplex(prhs[1]) || !(mxGetM(prhs[1])==1 && mxGet
 #ifdef DEBUG
   else{
     fflush(stderr);
-    fprintf(stderr, "LEVMAR: empty options vector, using defaults\n");
+    PRINT_ERROR("LEVMAR: empty options vector, using defaults\n");
   }
 #endif /* DEBUG */
 
@@ -443,7 +445,7 @@ extraargs:
     mdata.rhs[i+1]=(mxArray *)prhs[nrhs-nextra+i]; /* discard 'const' modifier */
 #ifdef DEBUG
   fflush(stderr);
-  fprintf(stderr, "LEVMAR: %d extra args\n", nextra);
+  PRINT_ERROR("LEVMAR: %d extra args\n", nextra);
 #endif /* DEBUG */
 
   if(mdata.isrow_p0){ /* row vector */
@@ -463,7 +465,7 @@ extraargs:
 
   /* ensure that the supplied function & Jacobian are as expected */
   if(checkFuncAndJacobian(p, m, n, havejac, &mdata)){
-    status=LM_ERROR;
+    status=ERROR_FAILED_FUNC_AND_JACOBIAN_CHECK;
     goto cleanup;
   }
 
@@ -479,7 +481,7 @@ extraargs:
         status=dlevmar_dif(func,          p, x, m, n, itmax, opts, info, NULL, covar, (void *)&mdata);
 #ifdef DEBUG
   fflush(stderr);
-  fprintf(stderr, "LEVMAR: calling dlevmar_der()/dlevmar_dif()\n");
+  PRINT_ERROR("LEVMAR: calling dlevmar_der()/dlevmar_dif()\n");
 #endif /* DEBUG */
     }
     else{ /* linear constraints */
@@ -494,7 +496,7 @@ extraargs:
 
 #ifdef DEBUG
   fflush(stderr);
-  fprintf(stderr, "LEVMAR: calling dlevmar_lec_der()/dlevmar_lec_dif()\n");
+  PRINT_ERROR("LEVMAR: calling dlevmar_lec_der()/dlevmar_lec_dif()\n");
 #endif /* DEBUG */
     }
   }
@@ -506,7 +508,7 @@ extraargs:
         status=dlevmar_bc_dif(func,          p, x, m, n, lb, ub, itmax, opts, info, NULL, covar, (void *)&mdata);
 #ifdef DEBUG
   fflush(stderr);
-  fprintf(stderr, "LEVMAR: calling dlevmar_bc_der()/dlevmar_bc_dif()\n");
+  PRINT_ERROR("LEVMAR: calling dlevmar_bc_der()/dlevmar_bc_dif()\n");
 #endif /* DEBUG */
     }
     else{ /* box & linear constraints */
@@ -521,7 +523,7 @@ extraargs:
 
 #ifdef DEBUG
   fflush(stderr);
-  fprintf(stderr, "LEVMAR: calling dlevmar_blec_der()/dlevmar_blec_dif()\n");
+  PRINT_ERROR("LEVMAR: calling dlevmar_blec_der()/dlevmar_blec_dif()\n");
 #endif /* DEBUG */
     }
   }
@@ -575,6 +577,6 @@ cleanup:
   mxFree(mdata.rhs);
   if(covar) mxFree(covar);
 
-  if(status==LM_ERROR)
+  if(status<0)
     mexWarnMsgTxt("levmar: optimization returned with an error!");
 }

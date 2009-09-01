@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// 
+//
 //  Levenberg - Marquardt non-linear minimization algorithm
 //  Copyright (C) 2004-06  Manolis Lourakis (lourakis at ics forth gr)
 //  Institute of Computer Science, Foundation for Research & Technology - Hellas
@@ -162,7 +162,7 @@ register LM_REAL *lb, *ub, *w, tmp;
   }
 }
 
-/* 
+/*
  * This function seeks the parameter vector p that best describes the measurements
  * vector x under box & linear constraints.
  * More precisely, given a vector function  func : R^m --> R^n with n>=m,
@@ -176,7 +176,7 @@ register LM_REAL *lb, *ub, *w, tmp;
  * This function requires an analytic Jacobian. In case the latter is unavailable,
  * use LEVMAR_BLEC_DIF() bellow
  *
- * Returns the number of iterations (>=0) if successful, LM_ERROR if failed
+ * Returns the number of iterations (>=0) if successful, or an error code (<0) on failure.
  *
  * For more details on the algorithm implemented by this function, please refer to
  * the comments in the top of this file.
@@ -184,7 +184,7 @@ register LM_REAL *lb, *ub, *w, tmp;
  */
 int LEVMAR_BLEC_DER(
   void (*func)(LM_REAL *p, LM_REAL *hx, int m, int n, void *adata), /* functional relation describing measurements. A p \in R^m yields a \hat{x} \in  R^n */
-  void (*jacf)(LM_REAL *p, LM_REAL *j, int m, int n, void *adata),  /* function to evaluate the Jacobian \part x / \part p */ 
+  void (*jacf)(LM_REAL *p, LM_REAL *j, int m, int n, void *adata),  /* function to evaluate the Jacobian \part x / \part p */
   LM_REAL *p,         /* I/O: initial parameter estimates. On output has the estimated solution */
   LM_REAL *x,         /* I: measurement vector. NULL implies a zero vector */
   int m,              /* I: parameter vector dimension (i.e. #unknowns) */
@@ -207,7 +207,7 @@ int LEVMAR_BLEC_DER(
                       * info[6]=reason for terminating: 1 - stopped by small gradient J^T e
                       *                                 2 - stopped by small Dp
                       *                                 3 - stopped by itmax
-                      *                                 4 - singular matrix. Restart from current p with increased mu 
+                      *                                 4 - singular matrix. Restart from current p with increased mu
                       *                                 5 - no further error reduction is possible. Restart with increased mu
                       *                                 6 - stopped by small ||e||_2
                       *                                 7 - stopped by invalid (i.e. NaN or Inf) "func" values. This is a user error
@@ -227,28 +227,28 @@ int LEVMAR_BLEC_DER(
   register int i;
 
   if(!jacf){
-    fprintf(stderr, RCAT("No function specified for computing the Jacobian in ", LEVMAR_BLEC_DER)
+    PRINT_ERROR(RCAT("No function specified for computing the Jacobian in ", LEVMAR_BLEC_DER)
       RCAT("().\nIf no such function is available, use ", LEVMAR_BLEC_DIF) RCAT("() rather than ", LEVMAR_BLEC_DER) "()\n");
-    return LM_ERROR;
+    return LM_ERROR_NO_JACOBIAN;
   }
 
   if(!lb && !ub){
-    fprintf(stderr, RCAT(LCAT(LEVMAR_BLEC_DER, "(): lower and upper bounds for box constraints cannot be both NULL, use "),
+    PRINT_ERROR(RCAT(LCAT(LEVMAR_BLEC_DER, "(): lower and upper bounds for box constraints cannot be both NULL, use "),
           LEVMAR_LEC_DER) "() in this case!\n");
-    return LM_ERROR;
+    return LM_ERROR_NO_BOX_CONSTRAINTS;
   }
 
   if(!LEVMAR_BOX_CHECK(lb, ub, m)){
-    fprintf(stderr, LCAT(LEVMAR_BLEC_DER, "(): at least one lower bound exceeds the upper one\n"));
-    return LM_ERROR;
+    PRINT_ERROR(LCAT(LEVMAR_BLEC_DER, "(): at least one lower bound exceeds the upper one\n"));
+    return LM_ERROR_FAILED_BOX_CHECK;
   }
 
   /* measurement vector needs to be extended by m */
   if(x){ /* nonzero x */
     data.x=(LM_REAL *)malloc((n+m)*sizeof(LM_REAL));
     if(!data.x){
-      fprintf(stderr, LCAT(LEVMAR_BLEC_DER, "(): memory allocation request #1 failed\n"));
-      return LM_ERROR;
+      PRINT_ERROR(LCAT(LEVMAR_BLEC_DER, "(): memory allocation request #1 failed\n"));
+      return LM_ERROR_MEMORY_ALLOCATION_FAILURE;
     }
 
     for(i=0; i<n; ++i)
@@ -261,9 +261,9 @@ int LEVMAR_BLEC_DER(
 
   data.w=(LM_REAL *)malloc(m*sizeof(LM_REAL) + m*sizeof(int)); /* should be arranged in that order for proper doubles alignment */
   if(!data.w){
-    fprintf(stderr, LCAT(LEVMAR_BLEC_DER, "(): memory allocation request #2 failed\n"));
+    PRINT_ERROR(LCAT(LEVMAR_BLEC_DER, "(): memory allocation request #2 failed\n"));
     if(data.x) free(data.x);
-    return LM_ERROR;
+    return LM_ERROR_MEMORY_ALLOCATION_FAILURE;
   }
   data.bctype=(int *)(data.w+m);
 
@@ -312,7 +312,7 @@ int LEVMAR_BLEC_DIF(
                        * scale factor for initial \mu, stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2 and
                        * the step used in difference approximation to the Jacobian. Set to NULL for defaults to be used.
                        * If \delta<0, the Jacobian is approximated with central differences which are more accurate
-                       * (but slower!) compared to the forward differences employed by default. 
+                       * (but slower!) compared to the forward differences employed by default.
                        */
   LM_REAL info[LM_INFO_SZ],
 					           /* O: information regarding the minimization. Set to NULL if don't care
@@ -322,7 +322,7 @@ int LEVMAR_BLEC_DIF(
                       * info[6]=reason for terminating: 1 - stopped by small gradient J^T e
                       *                                 2 - stopped by small Dp
                       *                                 3 - stopped by itmax
-                      *                                 4 - singular matrix. Restart from current p with increased mu 
+                      *                                 4 - singular matrix. Restart from current p with increased mu
                       *                                 5 - no further error reduction is possible. Restart with increased mu
                       *                                 6 - stopped by small ||e||_2
                       *                                 7 - stopped by invalid (i.e. NaN or Inf) "func" values. This is a user error
@@ -342,22 +342,22 @@ int LEVMAR_BLEC_DIF(
   LM_REAL locinfo[LM_INFO_SZ];
 
   if(!lb && !ub){
-    fprintf(stderr, RCAT(LCAT(LEVMAR_BLEC_DIF, "(): lower and upper bounds for box constraints cannot be both NULL, use "),
+    PRINT_ERROR(RCAT(LCAT(LEVMAR_BLEC_DIF, "(): lower and upper bounds for box constraints cannot be both NULL, use "),
           LEVMAR_LEC_DIF) "() in this case!\n");
-    return LM_ERROR;
+    return LM_ERROR_NO_BOX_CONSTRAINTS;
   }
 
   if(!LEVMAR_BOX_CHECK(lb, ub, m)){
-    fprintf(stderr, LCAT(LEVMAR_BLEC_DER, "(): at least one lower bound exceeds the upper one\n"));
-    return LM_ERROR;
+    PRINT_ERROR(LCAT(LEVMAR_BLEC_DER, "(): at least one lower bound exceeds the upper one\n"));
+    return LM_ERROR_FAILED_BOX_CHECK;
   }
 
   /* measurement vector needs to be extended by m */
   if(x){ /* nonzero x */
     data.x=(LM_REAL *)malloc((n+m)*sizeof(LM_REAL));
     if(!data.x){
-      fprintf(stderr, LCAT(LEVMAR_BLEC_DER, "(): memory allocation request #1 failed\n"));
-      return LM_ERROR;
+      PRINT_ERROR(LCAT(LEVMAR_BLEC_DER, "(): memory allocation request #1 failed\n"));
+      return LM_ERROR_MEMORY_ALLOCATION_FAILURE;
     }
 
     for(i=0; i<n; ++i)
@@ -370,9 +370,9 @@ int LEVMAR_BLEC_DIF(
 
   data.w=(LM_REAL *)malloc(m*sizeof(LM_REAL) + m*sizeof(int)); /* should be arranged in that order for proper doubles alignment */
   if(!data.w){
-    fprintf(stderr, LCAT(LEVMAR_BLEC_DER, "(): memory allocation request #2 failed\n"));
+    PRINT_ERROR(LCAT(LEVMAR_BLEC_DER, "(): memory allocation request #2 failed\n"));
     if(data.x) free(data.x);
-    return LM_ERROR;
+    return LM_ERROR_MEMORY_ALLOCATION_FAILURE;
   }
   data.bctype=(int *)(data.w+m);
 
