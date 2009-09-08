@@ -2,9 +2,8 @@
 This BSD3 license applies to all files except those in levmar-2.4.
 
 All files in levmar-2.4 are licensed under the terms and conditions of
-the GPL as detailed in levmar-2.4/LICENSE.
-
-
+the GPL as detailed in levmar-2.4/LICENSE. The copyright of these
+files belong to Manolis Lourakis.
 
 Copyright (c) 2009 Roel van Dijk, Bas van Dijk
 

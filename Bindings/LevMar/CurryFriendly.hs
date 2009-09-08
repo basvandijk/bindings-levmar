@@ -1,7 +1,28 @@
+--------------------------------------------------------------------------------
+-- |
+-- Module      :  Bindings.LevMar.CurryFriendly
+-- Copyright   :  (c) 2009 Roel van Dijk & Bas van Dijk
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  vandijk.roel@gmail.com, v.dijk.bas@gmail.com
+-- Stability   :  Experimental
+--
+-- Curry friendly variants of the Levenberg-Marquardt algorithms in 'Bindings.LevMar'.
+--
+-- (This module re-exports all the necessary types and function from
+-- 'Bindings.LevMar', so there's no need to import that module when
+-- you want to use this one.)
+--
+--------------------------------------------------------------------------------
+
 module Bindings.LevMar.CurryFriendly
-    ( LMA_C._LM_OPTS_SZ
+    ( LMA_C._LM_VERSION
+
+      -- * Maximum sizes of arrays.
+    , LMA_C._LM_OPTS_SZ
     , LMA_C._LM_INFO_SZ
 
+      -- * Errors
     , LMA_C._LM_ERROR_LAPACK_ERROR
     , LMA_C._LM_ERROR_NO_JACOBIAN
     , LMA_C._LM_ERROR_NO_BOX_CONSTRAINTS
@@ -13,18 +34,24 @@ module Bindings.LevMar.CurryFriendly
     , LMA_C._LM_ERROR_SINGULAR_MATRIX
     , LMA_C._LM_ERROR_SUM_OF_SQUARES_NOT_FINITE
 
+      -- * Default values for options.
     , LMA_C._LM_INIT_MU
     , LMA_C._LM_STOP_THRESH
     , LMA_C._LM_DIFF_DELTA
 
-    , LMA_C._LM_VERSION
-
+    -- * Model & Jacobian
     , LMA_C.Model
     , LMA_C.Jacobian
 
     , LMA_C.withModel
     , LMA_C.withJacobian
 
+      -- * Handy type synonyms used in the curry friendly types.
+    , BoxConstraints
+    , LinearConstraints
+    , Weights
+
+      -- * Curry friendly types.
     , LevMarDer
     , LevMarDif
     , LevMarBCDer
@@ -34,6 +61,7 @@ module Bindings.LevMar.CurryFriendly
     , LevMarBLecDer
     , LevMarBLecDif
 
+      -- * Curry friendly variants of the Levenberg-Marquardt algorithms in 'Bindings.Levmar'.
     , dlevmar_der
     , slevmar_der
     , dlevmar_dif
@@ -52,19 +80,33 @@ module Bindings.LevMar.CurryFriendly
     , slevmar_blec_dif
     ) where
 
+
 import Foreign.C.Types (CInt, CFloat, CDouble)
 import Foreign.Ptr     (Ptr, FunPtr)
 
 import qualified Bindings.LevMar as LMA_C
 
-type BoxConstraints    cr a =  Ptr cr -- |Lower bounds
-                            -> Ptr cr -- |Upper bounds
+
+--------------------------------------------------------------------------------
+-- Handy type synonyms used in the curry friendly types.
+--------------------------------------------------------------------------------
+
+type BoxConstraints    cr a =  Ptr cr -- Lower bounds
+                            -> Ptr cr -- Upper bounds
                             -> a
 
-type LinearConstraints cr a =  Ptr cr -- |Constraints matrix
-                            -> Ptr cr -- |Right hand constraints vector
-                            -> CInt   -- |Number of constraints
+type LinearConstraints cr a =  Ptr cr -- Constraints matrix
+                            -> Ptr cr -- Right hand constraints vector
+                            -> CInt   -- Number of constraints
                             -> a
+
+type Weights           cr a =  Ptr cr -- Weights 
+                            -> a
+
+
+--------------------------------------------------------------------------------
+-- Curry friendly types.
+--------------------------------------------------------------------------------
 
 type LevMarDif     cr = LMA_C.LevMarDif cr
 type LevMarDer     cr = FunPtr (LMA_C.Jacobian cr) -> LevMarDif cr
@@ -72,9 +114,13 @@ type LevMarBCDif   cr = BoxConstraints cr (LevMarDif cr)
 type LevMarBCDer   cr = BoxConstraints cr (LevMarDer cr)
 type LevMarLecDif  cr = LinearConstraints cr (LevMarDif cr)
 type LevMarLecDer  cr = LinearConstraints cr (LevMarDer cr)
-type LevMarBLecDif cr = BoxConstraints cr (LinearConstraints cr (Ptr cr -> LevMarDif cr))
-type LevMarBLecDer cr = BoxConstraints cr (LinearConstraints cr (Ptr cr -> LevMarDer cr))
+type LevMarBLecDif cr = BoxConstraints cr (LinearConstraints cr (Weights cr (LevMarDif cr)))
+type LevMarBLecDer cr = BoxConstraints cr (LinearConstraints cr (Weights cr (LevMarDer cr)))
 
+
+--------------------------------------------------------------------------------
+-- Reordering arguments to create curry friendly variants.
+--------------------------------------------------------------------------------
 
 mk_levmar_der :: LMA_C.LevMarDer cr -> LevMarDer cr
 mk_levmar_der lma j f
@@ -104,6 +150,10 @@ mk_levmar_blec_der :: LMA_C.LevMarBLecDer cr -> LevMarBLecDer cr
 mk_levmar_blec_der lma lb ub a b k wghts j f p x m n
                  = lma f j p x m n lb ub a b k wghts
 
+
+--------------------------------------------------------------------------------
+-- Curry friendly variants of the Levenberg-Marquardt algorithms in 'Bindings.Levmar'.
+--------------------------------------------------------------------------------
 
 slevmar_dif :: LevMarDif CFloat
 slevmar_dif = LMA_C.slevmar_dif
@@ -152,3 +202,6 @@ slevmar_blec_der = mk_levmar_blec_der LMA_C.slevmar_blec_der
 
 dlevmar_blec_der :: LevMarBLecDer CDouble
 dlevmar_blec_der = mk_levmar_blec_der LMA_C.dlevmar_blec_der
+
+
+-- The End ---------------------------------------------------------------------

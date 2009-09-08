@@ -1,9 +1,28 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 
+--------------------------------------------------------------------------------
+-- |
+-- Module      :  Bindings.LevMar
+-- Copyright   :  (c) 2009 Roel van Dijk & Bas van Dijk
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  vandijk.roel@gmail.com, v.dijk.bas@gmail.com
+-- Stability   :  Experimental
+--
+-- A binding to the C levmar (Levenberg-Marquardt) library
+--
+-- For documentation see: <http://www.ics.forth.gr/~lourakis/levmar/>
+--
+--------------------------------------------------------------------------------
+
 module Bindings.LevMar
-    ( _LM_OPTS_SZ
+    ( _LM_VERSION
+
+      -- * Maximum sizes of arrays.
+    , _LM_OPTS_SZ
     , _LM_INFO_SZ
 
+      -- * Errors.
     , _LM_ERROR_LAPACK_ERROR
     , _LM_ERROR_NO_JACOBIAN
     , _LM_ERROR_NO_BOX_CONSTRAINTS
@@ -15,18 +34,19 @@ module Bindings.LevMar
     , _LM_ERROR_SINGULAR_MATRIX
     , _LM_ERROR_SUM_OF_SQUARES_NOT_FINITE
 
+      -- * Default values for options.
     , _LM_INIT_MU
     , _LM_STOP_THRESH
     , _LM_DIFF_DELTA
 
-    , _LM_VERSION
-
+      -- * Model & Jacobian.
     , Model
     , Jacobian
 
     , withModel
     , withJacobian
 
+      -- * Types of the Levenberg-Marquardt algorithms.
     , LevMarDer
     , LevMarDif
     , LevMarBCDer
@@ -36,6 +56,7 @@ module Bindings.LevMar
     , LevMarBLecDer
     , LevMarBLecDif
 
+      -- * Levenberg-Marquardt algorithms.
     , dlevmar_der
     , slevmar_der
     , dlevmar_dif
@@ -54,19 +75,35 @@ module Bindings.LevMar
     , slevmar_blec_dif
     ) where
 
+
 import Foreign.C.Types   (CInt, CFloat, CDouble)
 import Foreign.Ptr       (Ptr, FunPtr, freeHaskellFunPtr)
 import Control.Exception (bracket)
 
 #include <lm.h>
 
--- |The maximum size of the options array.
+
+-- | The version of the C levmar library.
+_LM_VERSION :: String
+_LM_VERSION = #const_str LM_VERSION
+
+
+--------------------------------------------------------------------------------
+-- Maximum sizes of arrays.
+--------------------------------------------------------------------------------
+
+-- | The maximum size of the options array.
 _LM_OPTS_SZ :: Int
 _LM_OPTS_SZ = #const LM_OPTS_SZ
 
--- |The size of the info array.
+-- | The size of the info array.
 _LM_INFO_SZ :: Int
 _LM_INFO_SZ = #const LM_INFO_SZ
+
+
+--------------------------------------------------------------------------------
+-- Errors.
+--------------------------------------------------------------------------------
 
 #{enum CInt,
  , _LM_ERROR_LAPACK_ERROR              	          = LM_ERROR_LAPACK_ERROR
@@ -81,18 +118,25 @@ _LM_INFO_SZ = #const LM_INFO_SZ
  , _LM_ERROR_SUM_OF_SQUARES_NOT_FINITE            = LM_ERROR_SUM_OF_SQUARES_NOT_FINITE
  }
 
+
+--------------------------------------------------------------------------------
+-- Default values for options.
+--------------------------------------------------------------------------------
+
 #let const_real r = "%e", r
 
 _LM_INIT_MU, _LM_STOP_THRESH, _LM_DIFF_DELTA :: Fractional a => a
+
 _LM_INIT_MU     = #const_real LM_INIT_MU
 _LM_STOP_THRESH = #const_real LM_STOP_THRESH
 _LM_DIFF_DELTA  = #const_real LM_DIFF_DELTA
 
--- |The version of the C levmar library.
-_LM_VERSION :: String
-_LM_VERSION = #const_str LM_VERSION
 
--- |Functional relation describing measurements.
+--------------------------------------------------------------------------------
+-- Model & Jacobian.
+--------------------------------------------------------------------------------
+
+-- | Functional relation describing measurements.
 type Model r =  Ptr r  -- p
              -> Ptr r  -- hx
              -> CInt   -- m
@@ -112,6 +156,11 @@ withModel m = bracket (mkModel m) freeHaskellFunPtr
 
 withJacobian :: Jacobian a -> (FunPtr (Jacobian a) -> IO b) -> IO b
 withJacobian j = bracket (mkJacobian j) freeHaskellFunPtr
+
+
+--------------------------------------------------------------------------------
+-- Types of the Levenberg-Marquardt algorithms.
+--------------------------------------------------------------------------------
 
 type LevMarDer cr =  FunPtr (Model cr)    -- func
                   -> FunPtr (Jacobian cr) -- jacf
@@ -243,6 +292,10 @@ type LevMarBLecDif cr =  FunPtr (Model cr) -- func
                       -> Ptr ()            -- adata
                       -> IO CInt
 
+--------------------------------------------------------------------------------
+-- Levenberg-Marquardt algorithms.
+--------------------------------------------------------------------------------
+
 foreign import ccall "slevmar_der"      slevmar_der      :: LevMarDer     CFloat
 foreign import ccall "dlevmar_der"      dlevmar_der      :: LevMarDer     CDouble
 foreign import ccall "slevmar_dif"      slevmar_dif      :: LevMarDif     CFloat
@@ -260,3 +313,5 @@ foreign import ccall "dlevmar_blec_der" dlevmar_blec_der :: LevMarBLecDer CDoubl
 foreign import ccall "slevmar_blec_dif" slevmar_blec_dif :: LevMarBLecDif CFloat
 foreign import ccall "dlevmar_blec_dif" dlevmar_blec_dif :: LevMarBLecDif CDouble
 
+
+-- The End ---------------------------------------------------------------------

@@ -9,7 +9,7 @@ copyright:     (c) 2009 Roel van Dijk & Bas van Dijk
 license:       OtherLicense
 license-file:  LICENSE
 category:      numerical
-synopsis:      A binding to the levmar (Levenberg-Marquardt) library
+synopsis:      A binding to the C levmar (Levenberg-Marquardt) library
 description:   The Levenberg-Marquardt algorithm is an iterative
                technique that finds a local minimum of a function that
                is expressed as the sum of squares of nonlinear
