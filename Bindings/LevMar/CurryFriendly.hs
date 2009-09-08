@@ -51,7 +51,7 @@ module Bindings.LevMar.CurryFriendly
     , LinearConstraints
     , Weights
 
-      -- * Curry friendly types.
+      -- * Curry friendly types of the Levenberg-Marquardt algorithms.
     , LevMarDer
     , LevMarDif
     , LevMarBCDer
@@ -100,12 +100,12 @@ type LinearConstraints cr a =  Ptr cr -- Constraints matrix
                             -> CInt   -- Number of constraints
                             -> a
 
-type Weights           cr a =  Ptr cr -- Weights 
+type Weights           cr a =  Ptr cr -- Weights
                             -> a
 
 
 --------------------------------------------------------------------------------
--- Curry friendly types.
+-- Curry friendly types of the Levenberg-Marquardt algorithms.
 --------------------------------------------------------------------------------
 
 type LevMarDif     cr = LMA_C.LevMarDif cr
