@@ -29,6 +29,10 @@ description:   The Levenberg-Marquardt algorithm is an iterative
                .
                See: <http://www.ics.forth.gr/~lourakis/levmar/>
                .
+	       Note that the included C library is lightly patched to
+	       make it pure. This way the functions can be used inside
+	       unsafePerformIO.
+	       .
                A note regarding the license:
                .
                All files EXCEPT those in the levmar-2.4 directory fall
