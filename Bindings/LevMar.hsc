@@ -34,7 +34,7 @@ module Bindings.LevMar
     , _LM_ERROR_SINGULAR_MATRIX
     , _LM_ERROR_SUM_OF_SQUARES_NOT_FINITE
 
-      -- * Default values for options.
+      -- * Default values for minimization options.
     , _LM_INIT_MU
     , _LM_STOP_THRESH
     , _LM_DIFF_DELTA
@@ -120,7 +120,7 @@ _LM_INFO_SZ = #const LM_INFO_SZ
 
 
 --------------------------------------------------------------------------------
--- Default values for options.
+-- Default values for minimization options.
 --------------------------------------------------------------------------------
 
 #let const_real r = "%e", r
