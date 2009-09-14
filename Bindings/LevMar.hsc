@@ -73,6 +73,23 @@ module Bindings.LevMar
     , slevmar_blec_der
     , dlevmar_blec_dif
     , slevmar_blec_dif
+
+      -- * Jacobian verification
+    , LevMarChkJac
+    , dlevmar_chkjac
+    , slevmar_chkjac
+
+      -- * Utils
+    , LevMarStddev
+    , LevMarCorCoef
+    , LevMarR2
+
+    , dlevmar_stddev
+    , slevmar_stddev
+    , dlevmar_corcoef
+    , slevmar_corcoef
+    , dlevmar_R2
+    , slevmar_R2
     ) where
 
 
@@ -312,6 +329,57 @@ foreign import ccall "slevmar_blec_der" slevmar_blec_der :: LevMarBLecDer CFloat
 foreign import ccall "dlevmar_blec_der" dlevmar_blec_der :: LevMarBLecDer CDouble
 foreign import ccall "slevmar_blec_dif" slevmar_blec_dif :: LevMarBLecDif CFloat
 foreign import ccall "dlevmar_blec_dif" dlevmar_blec_dif :: LevMarBLecDif CDouble
+
+
+--------------------------------------------------------------------------------
+-- Jacobian verification
+--------------------------------------------------------------------------------
+
+type LevMarChkJac cr =  FunPtr (Model cr)    -- func
+                     -> FunPtr (Jacobian cr) -- jacf
+                     -> Ptr cr               -- p
+                     -> CInt                 -- m
+                     -> CInt                 -- n
+                     -> Ptr ()               -- adata
+                     -> Ptr cr               -- err
+                     -> IO ()
+
+foreign import ccall "dlevmar_chkjac" dlevmar_chkjac :: LevMarChkJac CDouble
+foreign import ccall "slevmar_chkjac" slevmar_chkjac :: LevMarChkJac CFloat
+
+
+--------------------------------------------------------------------------------
+-- Utils
+--------------------------------------------------------------------------------
+
+-- | Standard deviation.
+type LevMarStddev cr =  Ptr cr -- covar
+                     -> CInt   -- m
+                     -> CInt   -- i
+                     -> IO cr
+
+-- | Pearson's correlation coefficient for best-fit parameters.
+type LevMarCorCoef cr =  Ptr cr -- covar
+                      -> CInt   -- m
+                      -> CInt   -- i
+                      -> CInt   -- j
+                      -> IO cr
+
+-- | Coefficient of determination (R2).
+type LevMarR2 cr =  FunPtr (Model cr) -- func
+                 -> Ptr cr            -- p
+                 -> Ptr cr            -- x
+                 -> CInt              -- m
+                 -> CInt              -- n
+                 -> Ptr ()            -- adata
+                 -> IO cr
+
+foreign import ccall "dlevmar_stddev"  dlevmar_stddev  :: LevMarStddev  CDouble
+foreign import ccall "slevmar_stddev"  slevmar_stddev  :: LevMarStddev  CFloat
+foreign import ccall "dlevmar_corcoef" dlevmar_corcoef :: LevMarCorCoef CDouble
+foreign import ccall "slevmar_corcoef" slevmar_corcoef :: LevMarCorCoef CFloat
+foreign import ccall "dlevmar_R2"      dlevmar_R2      :: LevMarR2      CDouble
+foreign import ccall "slevmar_R2"      slevmar_R2      :: LevMarR2      CFloat
 
 
 -- The End ---------------------------------------------------------------------

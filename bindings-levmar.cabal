@@ -44,7 +44,8 @@ description:   The Levenberg-Marquardt algorithm is an iterative
                GPL.
 
 
-extra-source-files: levmar-2.4/LICENSE
+extra-source-files: LICENSE
+                  , levmar-2.4/LICENSE
                   , levmar-2.4/*.h
                   , levmar-2.4/*.c
                   , levmar-2.4/*.txt
