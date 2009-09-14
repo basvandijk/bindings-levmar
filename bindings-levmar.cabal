@@ -1,5 +1,5 @@
 name:          bindings-levmar
-version:       0.1
+version:       0.1.0.1
 cabal-version: >= 1.6
 build-type:    Simple
 stability:     experimental
@@ -68,6 +68,7 @@ library
                  , Bindings.LevMar.CurryFriendly
   ghc-options: -Wall -O2
   cc-options: -D_OPENMP
+  extra-libraries: lapack
   include-dirs: levmar-2.4
   c-sources:
     levmar-2.4/Axb.c
@@ -76,4 +77,3 @@ library
     levmar-2.4/lmblec.c
     levmar-2.4/lmlec.c
     levmar-2.4/misc.c
-  pkgconfig-depends: lapack
