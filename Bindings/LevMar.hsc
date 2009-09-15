@@ -99,6 +99,8 @@ module Bindings.LevMar
     , slevmar_chkjac
 
       -- * Utils
+    , BestFitParameterIx
+
     , LevMarStddev
     , LevMarCorCoef
     , LevMarR2

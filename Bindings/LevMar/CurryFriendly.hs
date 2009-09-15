@@ -103,6 +103,8 @@ module Bindings.LevMar.CurryFriendly
     , LMA_C.slevmar_chkjac
 
       -- * Utils
+    , LMA_C.BestFitParameterIx
+
     , LMA_C.LevMarStddev
     , LMA_C.LevMarCorCoef
     , LMA_C.LevMarR2
