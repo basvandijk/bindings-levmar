@@ -611,8 +611,8 @@ LM_REAL LEVMAR_CORCOEF(LM_REAL *covar, int m, int i, int j)
 /* coefficient of determination.
  * see  http://en.wikipedia.org/wiki/Coefficient_of_determination
  */
-LM_REAL LEVMAR_R2(void (*func)(LM_REAL *p, LM_REAL *hx, int m, int n, void *adata),
-                  LM_REAL *p, LM_REAL *x, int m, int n, void *adata)
+int LEVMAR_R2(void (*func)(LM_REAL *p, LM_REAL *hx, int m, int n, void *adata),
+              LM_REAL *p, LM_REAL *x, int m, int n, void *adata, LM_REAL *result)
 {
 register int i;
 register LM_REAL tmp;
@@ -623,7 +623,7 @@ LM_REAL SSerr,  // sum of squared errors, i.e. residual sum of squares \sum_i (x
 
   if((hx=(LM_REAL *)malloc(n*sizeof(LM_REAL)))==NULL){
     PRINT_ERROR(RCAT("memory allocation request failed in ", LEVMAR_R2) "()\n");
-    exit(1);
+    return LM_ERROR_MEMORY_ALLOCATION_FAILURE;
   }
 
   /* hx=f(p) */
@@ -643,7 +643,8 @@ LM_REAL SSerr,  // sum of squared errors, i.e. residual sum of squares \sum_i (x
 
   free(hx);
 
-  return LM_CNST(1.0) - SSerr/SStot;
+  *result = LM_CNST(1.0) - SSerr/SStot;
+  return 0;
 }
 
 /* check box constraints for consistency */

@@ -265,14 +265,14 @@ extern void slevmar_chkjac(
 #ifdef LM_DBL_PREC
 extern double dlevmar_stddev( double *covar, int m, int i);
 extern double dlevmar_corcoef(double *covar, int m, int i, int j);
-extern double dlevmar_R2(void (*func)(double *p, double *hx, int m, int n, void *adata), double *p, double *x, int m, int n, void *adata);
+extern int dlevmar_R2(void (*func)(double *p, double *hx, int m, int n, void *adata), double *p, double *x, int m, int n, void *adata, double *result);
 
 #endif /* LM_DBL_PREC */
 
 #ifdef LM_SNGL_PREC
 extern float slevmar_stddev( float *covar, int m, int i);
 extern float slevmar_corcoef(float *covar, int m, int i, int j);
-extern float slevmar_R2(void (*func)(float *p, float *hx, int m, int n, void *adata), float *p, float *x, int m, int n, void *adata);
+extern int slevmar_R2(void (*func)(float *p, float *hx, int m, int n, void *adata), float *p, float *x, int m, int n, void *adata, float *result);
 #endif /* LM_SNGL_PREC */
 
 #ifdef __cplusplus
