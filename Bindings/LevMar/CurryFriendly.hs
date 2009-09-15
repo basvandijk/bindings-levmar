@@ -23,6 +23,7 @@ module Bindings.LevMar.CurryFriendly
     , LMA_C._LM_INFO_SZ
 
       -- * Errors
+    , LMA_C._LM_ERROR
     , LMA_C._LM_ERROR_LAPACK_ERROR
     , LMA_C._LM_ERROR_NO_JACOBIAN
     , LMA_C._LM_ERROR_NO_BOX_CONSTRAINTS

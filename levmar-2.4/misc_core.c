@@ -245,7 +245,7 @@ register LM_REAL d;
  * other value which may cause loss of significance.
  */
 
-void LEVMAR_CHKJAC(
+int LEVMAR_CHKJAC(
     void (*func)(LM_REAL *p, LM_REAL *hx, int m, int n, void *adata),
     void (*jacf)(LM_REAL *p, LM_REAL *j, int m, int n, void *adata),
     LM_REAL *p, int m, int n, void *adata, LM_REAL *err)
@@ -266,7 +266,7 @@ int fvec_sz=n, fjac_sz=n*m, pp_sz=m, fvecp_sz=n;
   buf=(LM_REAL *)malloc((fvec_sz + fjac_sz + pp_sz + fvecp_sz)*sizeof(LM_REAL));
   if(!buf){
     PRINT_ERROR(LCAT(LEVMAR_CHKJAC, "(): memory allocation request failed\n"));
-    exit(1);
+    return 0;
   }
   fvec=buf;
   fjac=fvec+fvec_sz;
@@ -315,7 +315,7 @@ int fvec_sz=n, fjac_sz=n*m, pp_sz=m, fvecp_sz=n;
 
   free(buf);
 
-  return;
+  return 1;
 }
 
 #ifdef HAVE_LAPACK

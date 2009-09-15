@@ -22,7 +22,6 @@
 #ifndef _LM_H_
 #define _LM_H_
 
-
 /************************************* Start of configuration options *************************************/
 
 /* specify whether to use LAPACK or not. The first option is strongly recommended */
@@ -49,7 +48,6 @@
 
 /****************** End of configuration options, no changes necessary beyond this point ******************/
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -61,16 +59,17 @@ extern "C" {
 #endif
 
 enum lmerror
-{ LM_ERROR_LAPACK_ERROR                        = -1
-, LM_ERROR_NO_JACOBIAN                         = -2
-, LM_ERROR_NO_BOX_CONSTRAINTS                  = -3
-, LM_ERROR_FAILED_BOX_CHECK                    = -4
-, LM_ERROR_MEMORY_ALLOCATION_FAILURE           = -5
-, LM_ERROR_CONSTRAINT_MATRIX_ROWS_GT_COLS      = -6
-, LM_ERROR_CONSTRAINT_MATRIX_NOT_FULL_ROW_RANK = -7
-, LM_ERROR_TOO_FEW_MEASUREMENTS                = -8
-, LM_ERROR_SINGULAR_MATRIX                     = -9
-, LM_ERROR_SUM_OF_SQUARES_NOT_FINITE           = -10
+{ LM_ERROR                                     = -1
+, LM_ERROR_LAPACK_ERROR                        = -2
+, LM_ERROR_NO_JACOBIAN                         = -3
+, LM_ERROR_NO_BOX_CONSTRAINTS                  = -4
+, LM_ERROR_FAILED_BOX_CHECK                    = -5
+, LM_ERROR_MEMORY_ALLOCATION_FAILURE           = -6
+, LM_ERROR_CONSTRAINT_MATRIX_ROWS_GT_COLS      = -7
+, LM_ERROR_CONSTRAINT_MATRIX_NOT_FULL_ROW_RANK = -8
+, LM_ERROR_TOO_FEW_MEASUREMENTS                = -9
+, LM_ERROR_SINGULAR_MATRIX                     = -10
+, LM_ERROR_SUM_OF_SQUARES_NOT_FINITE           = -11
 };
 
 #define FABS(x) (((x)>=0.0)? (x) : -(x))
@@ -248,14 +247,14 @@ extern int sAx_eq_b_LU_noLapack(float *A, float *B, float *x, int n);
 
 /* Jacobian verification, double & single precision */
 #ifdef LM_DBL_PREC
-extern void dlevmar_chkjac(
+extern int dlevmar_chkjac(
     void (*func)(double *p, double *hx, int m, int n, void *adata),
     void (*jacf)(double *p, double *j, int m, int n, void *adata),
     double *p, int m, int n, void *adata, double *err);
 #endif /* LM_DBL_PREC */
 
 #ifdef LM_SNGL_PREC
-extern void slevmar_chkjac(
+extern int slevmar_chkjac(
     void (*func)(float *p, float *hx, int m, int n, void *adata),
     void (*jacf)(float *p, float *j, int m, int n, void *adata),
     float *p, int m, int n, void *adata, float *err);

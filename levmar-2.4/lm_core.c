@@ -309,6 +309,13 @@ if(!(k%100)){
       issolved=AX_EQ_B_LU(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_LU;
 #endif /* HAVE_LAPACK */
 
+      if (issolved < 0)
+      {
+          k = issolved;
+          stop = 0;
+          goto levmar_der_end;
+      }
+
       if(issolved){
         /* compute p's new estimate and ||Dp||^2 */
         for(i=0, Dp_L2=0.0; i<m; ++i){
@@ -410,6 +417,8 @@ if(!(k%100)){
   if(covar){
     LEVMAR_COVAR(jacTjac, covar, p_eL2, m, n);
   }
+
+levmar_der_end: /* NOTE: this point is also reached via an explicit goto! */
 
   if(freework) free(work);
 
@@ -702,6 +711,13 @@ if(!(k%100)){
     issolved=AX_EQ_B_LU(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_LU;
 #endif /* HAVE_LAPACK */
 
+    if (issolved < 0)
+    {
+        k = issolved;
+        stop = 0;
+        goto levmar_dif_end;
+    }
+
     if(issolved){
     /* compute p's new estimate and ||Dp||^2 */
       for(i=0, Dp_L2=0.0; i<m; ++i){
@@ -818,6 +834,7 @@ if(!(k%100)){
     LEVMAR_COVAR(jacTjac, covar, p_eL2, m, n);
   }
 
+levmar_dif_end: /* NOTE: this point is also reached via an explicit goto! */
 
   if(freework) free(work);
 

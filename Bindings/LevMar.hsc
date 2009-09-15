@@ -23,6 +23,7 @@ module Bindings.LevMar
     , _LM_INFO_SZ
 
       -- * Errors.
+    , _LM_ERROR
     , _LM_ERROR_LAPACK_ERROR
     , _LM_ERROR_NO_JACOBIAN
     , _LM_ERROR_NO_BOX_CONSTRAINTS
@@ -146,6 +147,7 @@ _LM_INFO_SZ = #const LM_INFO_SZ
 --------------------------------------------------------------------------------
 
 #{enum CInt,
+ , _LM_ERROR                                      = LM_ERROR
  , _LM_ERROR_LAPACK_ERROR              	          = LM_ERROR_LAPACK_ERROR
  , _LM_ERROR_NO_JACOBIAN               	          = LM_ERROR_NO_JACOBIAN
  , _LM_ERROR_NO_BOX_CONSTRAINTS        	          = LM_ERROR_NO_BOX_CONSTRAINTS

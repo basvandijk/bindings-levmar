@@ -567,7 +567,14 @@ if(!(k%100)){
       issolved=AX_EQ_B_LU(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_LU;
 #endif /* HAVE_LAPACK */
 
-      if(issolved){
+      if (issolved < 0)
+      {
+          k = issolved;
+          stop = 0;
+          goto levmar_bcder_end;
+      }
+
+      if(issolved) {
         for(i=0; i<m; ++i)
           pDp[i]=p[i] + Dp[i];
 
@@ -803,6 +810,8 @@ breaknested: /* NOTE: this point is also reached via an explicit goto! */
   if(covar){
     LEVMAR_COVAR(jacTjac, covar, p_eL2, m, n);
   }
+
+levmar_bcder_end: /* NOTE: this pointis also reached via an explicit goto! */
 
   if(freework) free(work);
 
