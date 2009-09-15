@@ -39,6 +39,24 @@ module Bindings.LevMar.CurryFriendly
     , LMA_C._LM_STOP_THRESH
     , LMA_C._LM_DIFF_DELTA
 
+      -- * Handy type synonyms
+    , LMA_C.Parameters
+    , LMA_C.Measurements
+    , LMA_C.Options
+    , LMA_C.LowerBounds
+    , LMA_C.UpperBounds
+    , LMA_C.ConstraintsMatrix
+    , LMA_C.ConstraintsVector
+    , LMA_C.Weights
+    , LMA_C.Info
+    , LMA_C.Work
+    , LMA_C.Covar
+    , LMA_C.AData
+    , LMA_C.NrOfParameters
+    , LMA_C.NrOfMeasurements
+    , LMA_C.NrOfConstraints
+    , LMA_C.MaxIterations
+
     -- * Model & Jacobian
     , LMA_C.Model
     , LMA_C.Jacobian
@@ -49,7 +67,6 @@ module Bindings.LevMar.CurryFriendly
       -- * Handy type synonyms used in the curry friendly types.
     , BoxConstraints
     , LinearConstraints
-    , Weights
 
       -- * Curry friendly types of the Levenberg-Marquardt algorithms.
     , LevMarDer
@@ -78,11 +95,31 @@ module Bindings.LevMar.CurryFriendly
     , slevmar_blec_der
     , dlevmar_blec_dif
     , slevmar_blec_dif
+
+      -- * Jacobian verification
+    , LMA_C.Errors
+    , LMA_C.LevMarChkJac
+    , LMA_C.dlevmar_chkjac
+    , LMA_C.slevmar_chkjac
+
+      -- * Utils
+    , LMA_C.LevMarStddev
+    , LMA_C.LevMarCorCoef
+    , LMA_C.LevMarR2
+
+    , LMA_C.Result
+
+    , LMA_C.dlevmar_stddev
+    , LMA_C.slevmar_stddev
+    , LMA_C.dlevmar_corcoef
+    , LMA_C.slevmar_corcoef
+    , LMA_C.dlevmar_R2
+    , LMA_C.slevmar_R2
     ) where
 
 
-import Foreign.C.Types (CInt, CFloat, CDouble)
-import Foreign.Ptr     (Ptr, FunPtr)
+import Foreign.C.Types ( CFloat, CDouble )
+import Foreign.Ptr     ( FunPtr )
 
 import qualified Bindings.LevMar as LMA_C
 
@@ -91,16 +128,13 @@ import qualified Bindings.LevMar as LMA_C
 -- Handy type synonyms used in the curry friendly types.
 --------------------------------------------------------------------------------
 
-type BoxConstraints    cr a =  Ptr cr -- Lower bounds
-                            -> Ptr cr -- Upper bounds
+type BoxConstraints    cr a =  LMA_C.LowerBounds cr
+                            -> LMA_C.UpperBounds cr
                             -> a
 
-type LinearConstraints cr a =  Ptr cr -- Constraints matrix
-                            -> Ptr cr -- Right hand constraints vector
-                            -> CInt   -- Number of constraints
-                            -> a
-
-type Weights           cr a =  Ptr cr -- Weights
+type LinearConstraints cr a =  LMA_C.ConstraintsMatrix cr
+                            -> LMA_C.ConstraintsVector cr
+                            -> LMA_C.NrOfConstraints
                             -> a
 
 
@@ -114,8 +148,8 @@ type LevMarBCDif   cr = BoxConstraints cr (LevMarDif cr)
 type LevMarBCDer   cr = BoxConstraints cr (LevMarDer cr)
 type LevMarLecDif  cr = LinearConstraints cr (LevMarDif cr)
 type LevMarLecDer  cr = LinearConstraints cr (LevMarDer cr)
-type LevMarBLecDif cr = BoxConstraints cr (LinearConstraints cr (Weights cr (LevMarDif cr)))
-type LevMarBLecDer cr = BoxConstraints cr (LinearConstraints cr (Weights cr (LevMarDer cr)))
+type LevMarBLecDif cr = BoxConstraints cr (LinearConstraints cr (LMA_C.Weights cr -> (LevMarDif cr)))
+type LevMarBLecDer cr = BoxConstraints cr (LinearConstraints cr (LMA_C.Weights cr -> (LevMarDer cr)))
 
 
 --------------------------------------------------------------------------------
