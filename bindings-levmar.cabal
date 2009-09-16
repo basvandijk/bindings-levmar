@@ -1,7 +1,7 @@
 name:          bindings-levmar
-version:       0.1.1
+version:       0.1.1.1
 cabal-version: >= 1.6
-build-type:    Custom
+build-type:    Simple
 stability:     experimental
 tested-with:   GHC ==6.10.4
 author:        Roel van Dijk & Bas van Dijk
@@ -43,9 +43,6 @@ description:   The Levenberg-Marquardt algorithm is an iterative
                it is also linked with levmar. This means such a
                program can only by distributed under the terms of the
                GPL.
-
-extra-source-files: configure configure.hs
-extra-tmp-files:    bindings-levmar.buildinfo
 
 extra-source-files: LICENSE
                   , levmar-2.4/LICENSE
@@ -90,10 +87,13 @@ library
     levmar-2.4/misc.c
 
   if flag(mkl)
+    extra-libraries: mkl_lapack mkl_sequential mkl_core
     if arch(x86_64)
-      extra-libraries: mkl_lapack mkl_intel_lp64 mkl_sequential mkl_core
+      extra-libraries: mkl_intel_lp64
     else
-      extra-libraries: mkl_lapack mkl_intel mkl_sequential mkl_core
+      extra-libraries: mkl_intel
+  else
+    extra-libraries: lapack
 
   if flag(accelerate)
     frameworks: Accelerate
