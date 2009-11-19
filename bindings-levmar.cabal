@@ -1,5 +1,5 @@
 name:          bindings-levmar
-version:       0.1.1.1
+version:       0.2
 cabal-version: >= 1.6
 build-type:    Simple
 stability:     experimental
@@ -72,9 +72,9 @@ source-repository head
   location: http://code.haskell.org/bindings-levmar
 
 library
-  build-depends: base >= 3 && < 4.2
+  build-depends: base         >= 3     && < 4.2
+               , bindings-DSL >= 1.0.2 && < 1.1
   exposed-modules: Bindings.LevMar
-                 , Bindings.LevMar.CurryFriendly
   ghc-options: -Wall -O2
   cc-options: -D_OPENMP
   include-dirs: levmar-2.4
