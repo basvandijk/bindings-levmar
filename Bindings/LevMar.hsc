@@ -1,4 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 --------------------------------------------------------------------------------
 -- |
@@ -119,9 +120,24 @@ module Bindings.LevMar
     , c'slevmar_R2,      p'slevmar_R2
     ) where
 
+
+--------------------------------------------------------------------------------
+-- Imports
+--------------------------------------------------------------------------------
+
+import Prelude           ( Num, negate, fromInteger
+                         , Fractional, fromRational
+                         )
+import System.IO         ( IO )
+import Data.Char         ( String )
 import Foreign.C.Types   ( CInt, CFloat, CDouble )
 import Foreign.Ptr       ( Ptr, FunPtr, freeHaskellFunPtr )
 import Control.Exception ( bracket )
+
+
+--------------------------------------------------------------------------------
+-- Version
+--------------------------------------------------------------------------------
 
 -- | The version of the C levmar library.
 c'LM_VERSION :: String

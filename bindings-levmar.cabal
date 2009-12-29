@@ -3,7 +3,7 @@ version:       0.2
 cabal-version: >= 1.6
 build-type:    Simple
 stability:     experimental
-tested-with:   GHC ==6.10.4
+tested-with:   GHC == 6.10.4, GHC == 6.12.1
 author:        Roel van Dijk & Bas van Dijk
 maintainer:    vandijk.roel@gmail.com, v.dijk.bas@gmail.com
 copyright:     (c) 2009 Roel van Dijk & Bas van Dijk
@@ -72,7 +72,7 @@ source-repository head
   location: http://code.haskell.org/bindings-levmar
 
 library
-  build-depends: base         >= 3     && < 4.2
+  build-depends: base         >= 3     && < 4.3
                , bindings-DSL >= 1.0.2 && < 1.1
   exposed-modules: Bindings.LevMar
   ghc-options: -Wall -O2
