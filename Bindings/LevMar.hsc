@@ -6,7 +6,7 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Bindings.LevMar
--- Copyright   :  (c) 2009 Roel van Dijk & Bas van Dijk
+-- Copyright   :  (c) 2009-2010 Roel van Dijk & Bas van Dijk
 -- License     :  BSD-style (see the file LICENSE)
 --
 -- Maintainer  :  vandijk.roel@gmail.com, v.dijk.bas@gmail.com
