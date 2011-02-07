@@ -1,6 +1,8 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
+{-# OPTIONS_GHC -fno-warn-unused-binds #-}
+
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Bindings.LevMar
@@ -80,28 +82,28 @@ module Bindings.LevMar
     , LevMarBLecDif
 
       -- * Levenberg-Marquardt algorithms.
-    , c'dlevmar_der,      p'dlevmar_der
-    , c'slevmar_der,      p'slevmar_der
-    , c'dlevmar_dif,      p'dlevmar_dif
-    , c'slevmar_dif,      p'slevmar_dif
-    , c'dlevmar_bc_der,   p'dlevmar_bc_der
-    , c'slevmar_bc_der,   p'slevmar_bc_der
-    , c'dlevmar_bc_dif,   p'dlevmar_bc_dif
-    , c'slevmar_bc_dif,   p'slevmar_bc_dif
-    , c'dlevmar_lec_der,  p'dlevmar_lec_der
-    , c'slevmar_lec_der,  p'slevmar_lec_der
-    , c'dlevmar_lec_dif,  p'dlevmar_lec_dif
-    , c'slevmar_lec_dif,  p'slevmar_lec_dif
-    , c'dlevmar_blec_der, p'dlevmar_blec_der
-    , c'slevmar_blec_der, p'slevmar_blec_der
-    , c'dlevmar_blec_dif, p'dlevmar_blec_dif
-    , c'slevmar_blec_dif, p'slevmar_blec_dif
+    , c'dlevmar_der
+    , c'slevmar_der
+    , c'dlevmar_dif
+    , c'slevmar_dif
+    , c'dlevmar_bc_der
+    , c'slevmar_bc_der
+    , c'dlevmar_bc_dif
+    , c'slevmar_bc_dif
+    , c'dlevmar_lec_der
+    , c'slevmar_lec_der
+    , c'dlevmar_lec_dif
+    , c'slevmar_lec_dif
+    , c'dlevmar_blec_der
+    , c'slevmar_blec_der
+    , c'dlevmar_blec_dif
+    , c'slevmar_blec_dif
 
       -- * Jacobian verification
     , Errors
     , LevMarChkJac
-    , c'dlevmar_chkjac, p'dlevmar_chkjac
-    , c'slevmar_chkjac, p'slevmar_chkjac
+    , c'dlevmar_chkjac
+    , c'slevmar_chkjac
 
       -- * Utils
     , BestFitParameterIx
@@ -112,12 +114,12 @@ module Bindings.LevMar
 
     , Result
 
-    , c'dlevmar_stddev,  p'dlevmar_stddev
-    , c'slevmar_stddev,  p'slevmar_stddev
-    , c'dlevmar_corcoef, p'dlevmar_corcoef
-    , c'slevmar_corcoef, p'slevmar_corcoef
-    , c'dlevmar_R2,      p'dlevmar_R2
-    , c'slevmar_R2,      p'slevmar_R2
+    , c'dlevmar_stddev
+    , c'slevmar_stddev
+    , c'dlevmar_corcoef
+    , c'slevmar_corcoef
+    , c'dlevmar_R2
+    , c'slevmar_R2
     ) where
 
 
