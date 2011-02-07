@@ -127,9 +127,12 @@ module Bindings.LevMar
 -- Imports
 --------------------------------------------------------------------------------
 
-import Prelude           ( Num, negate, fromInteger
-                         , Fractional, fromRational
-                         )
+import Prelude           ( Num, Fractional )
+
+#if __GLASGOW_HASKELL__ < 700
+import Prelude           ( negate, fromInteger, fromRational )
+#endif
+
 import System.IO         ( IO )
 import Data.Char         ( String )
 import Foreign.C.Types   ( CInt, CFloat, CDouble )
