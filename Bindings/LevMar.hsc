@@ -12,7 +12,7 @@
 -- Maintainer  :  vandijk.roel@gmail.com, v.dijk.bas@gmail.com
 -- Stability   :  Experimental
 --
--- A binding to the C levmar (Levenberg-Marquardt) library
+-- A low level binding to the C levmar (Levenberg-Marquardt) library.
 --
 -- For documentation see: <http://www.ics.forth.gr/~lourakis/levmar/>
 --
