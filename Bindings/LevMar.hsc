@@ -134,7 +134,7 @@ import Prelude           ( negate, fromInteger, fromRational )
 #endif
 
 import System.IO         ( IO )
-import Data.Char         ( String )
+import Prelude           ( String )
 import Foreign.C.Types   ( CInt, CFloat, CDouble )
 import Foreign.Ptr       ( Ptr, FunPtr, freeHaskellFunPtr )
 import Control.Exception ( bracket )
