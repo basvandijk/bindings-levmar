@@ -92,7 +92,7 @@ library
     else
       extra-libraries: mkl_intel
   else
-    extra-libraries: lapack
+    extra-libraries: lapack blas
 
   if flag(accelerate)
     frameworks: Accelerate
