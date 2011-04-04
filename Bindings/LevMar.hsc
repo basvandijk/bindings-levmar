@@ -238,135 +238,135 @@ withJacobian j = bracket (mkJacobian j) freeHaskellFunPtr
 -- Types of the Levenberg-Marquardt algorithms.
 --------------------------------------------------------------------------------
 
-type LevMarDer cr =  FunPtr (Model cr)
-                  -> FunPtr (Jacobian cr)
-                  -> Parameters cr
-                  -> Measurements cr
-                  -> NrOfParameters
-                  -> NrOfMeasurements
-                  -> MaxIterations
-                  -> Options cr
-                  -> Info cr
-                  -> Work cr
-                  -> Covar cr
-                  -> AData
-                  -> IO Int
+type LevMarDer r =  FunPtr (Model r)
+                 -> FunPtr (Jacobian r)
+                 -> Parameters r
+                 -> Measurements r
+                 -> NrOfParameters
+                 -> NrOfMeasurements
+                 -> MaxIterations
+                 -> Options r
+                 -> Info r
+                 -> Work r
+                 -> Covar r
+                 -> AData
+                 -> IO Int
 
-type LevMarDif cr =  FunPtr (Model cr)
-                  -> Parameters cr
-                  -> Measurements cr
-                  -> NrOfParameters
-                  -> NrOfMeasurements
-                  -> MaxIterations
-                  -> Options cr
-                  -> Info cr
-                  -> Work cr
-                  -> Covar cr
-                  -> AData
-                  -> IO Int
+type LevMarDif r =  FunPtr (Model r)
+                 -> Parameters r
+                 -> Measurements r
+                 -> NrOfParameters
+                 -> NrOfMeasurements
+                 -> MaxIterations
+                 -> Options r
+                 -> Info r
+                 -> Work r
+                 -> Covar r
+                 -> AData
+                 -> IO Int
 
-type LevMarBCDer cr =  FunPtr (Model cr)
-                    -> FunPtr (Jacobian cr)
-                    -> Parameters cr
-                    -> Measurements cr
+type LevMarBCDer r =  FunPtr (Model r)
+                   -> FunPtr (Jacobian r)
+                   -> Parameters r
+                   -> Measurements r
+                   -> NrOfParameters
+                   -> NrOfMeasurements
+                   -> LowerBounds r
+                   -> UpperBounds r
+                   -> MaxIterations
+                   -> Options r
+                   -> Info r
+                   -> Work r
+                   -> Covar r
+                   -> AData
+                   -> IO Int
+
+type LevMarBCDif r =  FunPtr (Model r)
+                   -> Parameters r
+                   -> Measurements r
+                   -> NrOfParameters
+                   -> NrOfMeasurements
+                   -> LowerBounds r
+                   -> UpperBounds r
+                   -> MaxIterations
+                   -> Options r
+                   -> Info r
+                   -> Work r
+                   -> Covar r
+                   -> AData
+                   -> IO Int
+
+type LevMarLecDer r =  FunPtr (Model r)
+                    -> FunPtr (Jacobian r)
+                    -> Parameters r
+                    -> Measurements r
                     -> NrOfParameters
                     -> NrOfMeasurements
-                    -> LowerBounds cr
-                    -> UpperBounds cr
+                    -> ConstraintsMatrix r
+                    -> ConstraintsVector r
+                    -> NrOfConstraints
                     -> MaxIterations
-                    -> Options cr
-                    -> Info cr
-                    -> Work cr
-                    -> Covar cr
+                    -> Options r
+                    -> Info r
+                    -> Work r
+                    -> Covar r
                     -> AData
                     -> IO Int
 
-type LevMarBCDif cr =  FunPtr (Model cr)
-                    -> Parameters cr
-                    -> Measurements cr
+type LevMarLecDif r =  FunPtr (Model r)
+                    -> Parameters r
+                    -> Measurements r
                     -> NrOfParameters
                     -> NrOfMeasurements
-                    -> LowerBounds cr
-                    -> UpperBounds cr
+                    -> ConstraintsMatrix r
+                    -> ConstraintsVector r
+                    -> NrOfConstraints
                     -> MaxIterations
-                    -> Options cr
-                    -> Info cr
-                    -> Work cr
-                    -> Covar cr
+                    -> Options r
+                    -> Info r
+                    -> Work r
+                    -> Covar r
                     -> AData
                     -> IO Int
 
-type LevMarLecDer cr =  FunPtr (Model cr)
-                     -> FunPtr (Jacobian cr)
-                     -> Parameters cr
-                     -> Measurements cr
+type LevMarBLecDer r =  FunPtr (Model r)
+                     -> FunPtr (Jacobian r)
+                     -> Parameters r
+                     -> Measurements r
                      -> NrOfParameters
                      -> NrOfMeasurements
-                     -> ConstraintsMatrix cr
-                     -> ConstraintsVector cr
+                     -> LowerBounds r
+                     -> UpperBounds r
+                     -> ConstraintsMatrix r
+                     -> ConstraintsVector r
                      -> NrOfConstraints
+                     -> Weights r
                      -> MaxIterations
-                     -> Options cr
-                     -> Info cr
-                     -> Work cr
-                     -> Covar cr
+                     -> Options r
+                     -> Info r
+                     -> Work r
+                     -> Covar r
                      -> AData
                      -> IO Int
 
-type LevMarLecDif cr =  FunPtr (Model cr)
-                     -> Parameters cr
-                     -> Measurements cr
+type LevMarBLecDif r =  FunPtr (Model r)
+                     -> Parameters r
+                     -> Measurements r
                      -> NrOfParameters
                      -> NrOfMeasurements
-                     -> ConstraintsMatrix cr
-                     -> ConstraintsVector cr
+                     -> LowerBounds r
+                     -> UpperBounds r
+                     -> ConstraintsMatrix r
+                     -> ConstraintsVector r
                      -> NrOfConstraints
+                     -> Weights r
                      -> MaxIterations
-                     -> Options cr
-                     -> Info cr
-                     -> Work cr
-                     -> Covar cr
+                     -> Options r
+                     -> Info r
+                     -> Work r
+                     -> Covar r
                      -> AData
                      -> IO Int
-
-type LevMarBLecDer cr =  FunPtr (Model cr)
-                      -> FunPtr (Jacobian cr)
-                      -> Parameters cr
-                      -> Measurements cr
-                      -> NrOfParameters
-                      -> NrOfMeasurements
-                      -> LowerBounds cr
-                      -> UpperBounds cr
-                      -> ConstraintsMatrix cr
-                      -> ConstraintsVector cr
-                      -> NrOfConstraints
-                      -> Weights cr
-                      -> MaxIterations
-                      -> Options cr
-                      -> Info cr
-                      -> Work cr
-                      -> Covar cr
-                      -> AData
-                      -> IO Int
-
-type LevMarBLecDif cr =  FunPtr (Model cr)
-                      -> Parameters cr
-                      -> Measurements cr
-                      -> NrOfParameters
-                      -> NrOfMeasurements
-                      -> LowerBounds cr
-                      -> UpperBounds cr
-                      -> ConstraintsMatrix cr
-                      -> ConstraintsVector cr
-                      -> NrOfConstraints
-                      -> Weights cr
-                      -> MaxIterations
-                      -> Options cr
-                      -> Info cr
-                      -> Work cr
-                      -> Covar cr
-                      -> AData
-                      -> IO Int
 
 
 --------------------------------------------------------------------------------
@@ -397,14 +397,14 @@ type LevMarBLecDif cr =  FunPtr (Model cr)
 
 type Errors = Ptr
 
-type LevMarChkJac cr =  FunPtr (Model cr)
-                     -> FunPtr (Jacobian cr)
-                     -> Parameters cr
-                     -> NrOfParameters
-                     -> NrOfMeasurements
-                     -> AData
-                     -> Errors cr
-                     -> IO ()
+type LevMarChkJac r =  FunPtr (Model r)
+                    -> FunPtr (Jacobian r)
+                    -> Parameters r
+                    -> NrOfParameters
+                    -> NrOfMeasurements
+                    -> AData
+                    -> Errors r
+                    -> IO ()
 
 #ccall dlevmar_chkjac , LevMarChkJac Double
 #ccall slevmar_chkjac , LevMarChkJac Float
@@ -417,27 +417,27 @@ type LevMarChkJac cr =  FunPtr (Model cr)
 type BestFitParameterIx = Int
 
 -- | Standard deviation.
-type LevMarStddev cr =  Covar cr
-                     -> NrOfParameters
-                     -> BestFitParameterIx
-                     -> IO cr
+type LevMarStddev r =  Covar r
+                    -> NrOfParameters
+                    -> BestFitParameterIx
+                    -> IO r
 
 -- | Pearson's correlation coefficient for best-fit parameters.
-type LevMarCorCoef cr =  Covar cr
-                      -> NrOfParameters
-                      -> BestFitParameterIx
-                      -> BestFitParameterIx
-                      -> IO cr
+type LevMarCorCoef r =  Covar r
+                     -> NrOfParameters
+                     -> BestFitParameterIx
+                     -> BestFitParameterIx
+                     -> IO r
 
 -- | Coefficient of determination (R2).
-type LevMarR2 cr =  FunPtr (Model cr)
-                 -> Parameters cr
-                 -> Measurements cr
-                 -> NrOfParameters
-                 -> NrOfMeasurements
-                 -> AData
-                 -> Result cr
-                 -> IO Int
+type LevMarR2 r =  FunPtr (Model r)
+                -> Parameters r
+                -> Measurements r
+                -> NrOfParameters
+                -> NrOfMeasurements
+                -> AData
+                -> Result r
+                -> IO Int
 
 type Result = Ptr
 
