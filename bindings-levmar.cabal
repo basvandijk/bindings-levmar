@@ -71,7 +71,7 @@ flag accelerate
 
 source-repository head
   type: darcs
-  location: http://code.haskell.org/bindings-levmar
+  location: http://code.haskell.org/~basvandijk/code/bindings-levmar
 
 library
   build-depends: base         >= 3     && < 4.4
