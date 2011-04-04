@@ -127,15 +127,15 @@ module Bindings.LevMar
 -- Imports
 --------------------------------------------------------------------------------
 
-import Prelude           ( Num, Fractional )
+import Prelude           ( Num, Fractional, Double, Float )
 
 #if __GLASGOW_HASKELL__ < 700
 import Prelude           ( negate, fromInteger, fromRational )
 #endif
 
+import Data.Int          ( Int )
 import System.IO         ( IO )
 import Prelude           ( String )
-import Foreign.C.Types   ( CInt, CFloat, CDouble )
 import Foreign.Ptr       ( Ptr, FunPtr, freeHaskellFunPtr )
 import Control.Exception ( bracket )
 
@@ -202,10 +202,10 @@ type Info              = Ptr
 type Work              = Ptr
 type Covar             = Ptr
 type AData             = Ptr ()
-type NrOfParameters    = CInt
-type NrOfMeasurements  = CInt
-type NrOfConstraints   = CInt
-type MaxIterations     = CInt
+type NrOfParameters    = Int
+type NrOfMeasurements  = Int
+type NrOfConstraints   = Int
+type MaxIterations     = Int
 
 
 --------------------------------------------------------------------------------
@@ -250,7 +250,7 @@ type LevMarDer cr =  FunPtr (Model cr)
                   -> Work cr
                   -> Covar cr
                   -> AData
-                  -> IO CInt
+                  -> IO Int
 
 type LevMarDif cr =  FunPtr (Model cr)
                   -> Parameters cr
@@ -263,7 +263,7 @@ type LevMarDif cr =  FunPtr (Model cr)
                   -> Work cr
                   -> Covar cr
                   -> AData
-                  -> IO CInt
+                  -> IO Int
 
 type LevMarBCDer cr =  FunPtr (Model cr)
                     -> FunPtr (Jacobian cr)
@@ -279,7 +279,7 @@ type LevMarBCDer cr =  FunPtr (Model cr)
                     -> Work cr
                     -> Covar cr
                     -> AData
-                    -> IO CInt
+                    -> IO Int
 
 type LevMarBCDif cr =  FunPtr (Model cr)
                     -> Parameters cr
@@ -294,7 +294,7 @@ type LevMarBCDif cr =  FunPtr (Model cr)
                     -> Work cr
                     -> Covar cr
                     -> AData
-                    -> IO CInt
+                    -> IO Int
 
 type LevMarLecDer cr =  FunPtr (Model cr)
                      -> FunPtr (Jacobian cr)
@@ -311,7 +311,7 @@ type LevMarLecDer cr =  FunPtr (Model cr)
                      -> Work cr
                      -> Covar cr
                      -> AData
-                     -> IO CInt
+                     -> IO Int
 
 type LevMarLecDif cr =  FunPtr (Model cr)
                      -> Parameters cr
@@ -327,7 +327,7 @@ type LevMarLecDif cr =  FunPtr (Model cr)
                      -> Work cr
                      -> Covar cr
                      -> AData
-                     -> IO CInt
+                     -> IO Int
 
 type LevMarBLecDer cr =  FunPtr (Model cr)
                       -> FunPtr (Jacobian cr)
@@ -347,7 +347,7 @@ type LevMarBLecDer cr =  FunPtr (Model cr)
                       -> Work cr
                       -> Covar cr
                       -> AData
-                      -> IO CInt
+                      -> IO Int
 
 type LevMarBLecDif cr =  FunPtr (Model cr)
                       -> Parameters cr
@@ -366,29 +366,29 @@ type LevMarBLecDif cr =  FunPtr (Model cr)
                       -> Work cr
                       -> Covar cr
                       -> AData
-                      -> IO CInt
+                      -> IO Int
 
 
 --------------------------------------------------------------------------------
 -- Levenberg-Marquardt algorithms.
 --------------------------------------------------------------------------------
 
-#ccall slevmar_der      , LevMarDer     CFloat
-#ccall dlevmar_der      , LevMarDer     CDouble
-#ccall slevmar_dif      , LevMarDif     CFloat
-#ccall dlevmar_dif      , LevMarDif     CDouble
-#ccall slevmar_bc_der   , LevMarBCDer   CFloat
-#ccall dlevmar_bc_der   , LevMarBCDer   CDouble
-#ccall slevmar_bc_dif   , LevMarBCDif   CFloat
-#ccall dlevmar_bc_dif   , LevMarBCDif   CDouble
-#ccall slevmar_lec_der  , LevMarLecDer  CFloat
-#ccall dlevmar_lec_der  , LevMarLecDer  CDouble
-#ccall slevmar_lec_dif  , LevMarLecDif  CFloat
-#ccall dlevmar_lec_dif  , LevMarLecDif  CDouble
-#ccall slevmar_blec_der , LevMarBLecDer CFloat
-#ccall dlevmar_blec_der , LevMarBLecDer CDouble
-#ccall slevmar_blec_dif , LevMarBLecDif CFloat
-#ccall dlevmar_blec_dif , LevMarBLecDif CDouble
+#ccall slevmar_der      , LevMarDer     Float
+#ccall dlevmar_der      , LevMarDer     Double
+#ccall slevmar_dif      , LevMarDif     Float
+#ccall dlevmar_dif      , LevMarDif     Double
+#ccall slevmar_bc_der   , LevMarBCDer   Float
+#ccall dlevmar_bc_der   , LevMarBCDer   Double
+#ccall slevmar_bc_dif   , LevMarBCDif   Float
+#ccall dlevmar_bc_dif   , LevMarBCDif   Double
+#ccall slevmar_lec_der  , LevMarLecDer  Float
+#ccall dlevmar_lec_der  , LevMarLecDer  Double
+#ccall slevmar_lec_dif  , LevMarLecDif  Float
+#ccall dlevmar_lec_dif  , LevMarLecDif  Double
+#ccall slevmar_blec_der , LevMarBLecDer Float
+#ccall dlevmar_blec_der , LevMarBLecDer Double
+#ccall slevmar_blec_dif , LevMarBLecDif Float
+#ccall dlevmar_blec_dif , LevMarBLecDif Double
 
 
 --------------------------------------------------------------------------------
@@ -406,15 +406,15 @@ type LevMarChkJac cr =  FunPtr (Model cr)
                      -> Errors cr
                      -> IO ()
 
-#ccall dlevmar_chkjac , LevMarChkJac CDouble
-#ccall slevmar_chkjac , LevMarChkJac CFloat
+#ccall dlevmar_chkjac , LevMarChkJac Double
+#ccall slevmar_chkjac , LevMarChkJac Float
 
 
 --------------------------------------------------------------------------------
 -- Utils
 --------------------------------------------------------------------------------
 
-type BestFitParameterIx = CInt
+type BestFitParameterIx = Int
 
 -- | Standard deviation.
 type LevMarStddev cr =  Covar cr
@@ -437,16 +437,16 @@ type LevMarR2 cr =  FunPtr (Model cr)
                  -> NrOfMeasurements
                  -> AData
                  -> Result cr
-                 -> IO CInt
+                 -> IO Int
 
 type Result = Ptr
 
-#ccall dlevmar_stddev  , LevMarStddev  CDouble
-#ccall slevmar_stddev  , LevMarStddev  CFloat
-#ccall dlevmar_corcoef , LevMarCorCoef CDouble
-#ccall slevmar_corcoef , LevMarCorCoef CFloat
-#ccall dlevmar_R2      , LevMarR2      CDouble
-#ccall slevmar_R2      , LevMarR2      CFloat
+#ccall dlevmar_stddev  , LevMarStddev  Double
+#ccall slevmar_stddev  , LevMarStddev  Float
+#ccall dlevmar_corcoef , LevMarCorCoef Double
+#ccall slevmar_corcoef , LevMarCorCoef Float
+#ccall dlevmar_R2      , LevMarR2      Double
+#ccall slevmar_R2      , LevMarR2      Float
 
 
 -- The End ---------------------------------------------------------------------
