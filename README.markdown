@@ -1,0 +1,31 @@
+Low level Haskell bindings to the [C levmar (Levenberg-Marquardt)
+library](http://www.ics.forth.gr/~lourakis/levmar/)
+
+See the [levmar](http://hackage.haskell.org/package/levmar) package
+for a high-level wrapper around this package.
+
+The Levenberg-Marquardt algorithm is an iterative technique that finds
+a local minimum of a function that is expressed as the sum of squares
+of nonlinear functions. It has become a standard technique for
+nonlinear least-squares problems and can be thought of as a
+combination of steepest descent and the Gauss-Newton method. When the
+current solution is far from the correct one, the algorithm behaves
+like a steepest descent method: slow, but guaranteed to converge. When
+the current solution is close to the correct solution, it becomes a
+Gauss-Newton method.
+
+Both unconstrained and constrained (under linear equations and box
+constraints) Levenberg-Marquardt variants are included.  All functions
+have `Double` and `Float` variants.
+
+Note that the included C library is lightly patched to make it
+pure. This way the functions can be used inside `unsafePerformIO`.
+
+License
+=======
+
+All files **except** those in the `levmar-2.4` directory fall under
+the BSD3 license. The levmar C library, which is bundled with this
+binding, falls under the GPL. If you build a program which is linked
+with this binding then it is also linked with levmar. This means such
+a program can only by distributed under the terms of the GPL.
