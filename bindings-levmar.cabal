@@ -70,8 +70,8 @@ flag accelerate
   default:     False
 
 source-repository head
-  type: darcs
-  location: http://code.haskell.org/~basvandijk/code/bindings-levmar
+  type: git
+  location: git://github.com/basvandijk/bindings-levmar.git
 
 library
   build-depends: base         >= 3     && < 4.4
