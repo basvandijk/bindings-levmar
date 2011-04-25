@@ -47,7 +47,7 @@ description:   See the @levmar@ package for a high-level wrapper
                program can only by distributed under the terms of the
                GPL.
 
-extra-source-files: LICENSE
+extra-source-files: README.markdown
                   , levmar-2.4/LICENSE
                   , levmar-2.4/*.h
                   , levmar-2.4/*.c
