@@ -1,5 +1,5 @@
 name:          bindings-levmar
-version:       0.3
+version:       1.0
 cabal-version: >= 1.6
 build-type:    Simple
 stability:     experimental
