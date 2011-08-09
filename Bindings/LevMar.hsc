@@ -1,5 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface #-}
-{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE ForeignFunctionInterface, NoImplicitPrelude #-}
 
 {-# OPTIONS_GHC -fno-warn-unused-binds #-}
 
@@ -127,7 +126,7 @@ module Bindings.LevMar
 -- Imports
 --------------------------------------------------------------------------------
 
-import Prelude           ( Num, Fractional, Double, Float )
+import Prelude           ( Num, Fractional, Double, Float, String )
 
 #if __GLASGOW_HASKELL__ < 700
 import Prelude           ( negate, fromInteger, fromRational )
@@ -135,7 +134,6 @@ import Prelude           ( negate, fromInteger, fromRational )
 
 import Data.Int          ( Int )
 import System.IO         ( IO )
-import Prelude           ( String )
 import Foreign.Ptr       ( Ptr, FunPtr, freeHaskellFunPtr )
 import Control.Exception ( bracket )
 
@@ -447,6 +445,3 @@ type Result = Ptr
 #ccall slevmar_corcoef , LevMarCorCoef Float
 #ccall dlevmar_R2      , LevMarR2      Double
 #ccall slevmar_R2      , LevMarR2      Float
-
-
--- The End ---------------------------------------------------------------------
