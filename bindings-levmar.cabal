@@ -8,7 +8,7 @@ maintainer:    Roel van Dijk <vandijk.roel@gmail.com> & Bas van Dijk <v.dijk.bas
 copyright:     2009–2011 Roel van Dijk & Bas van Dijk
 license:       OtherLicense
 license-file:  LICENSE
-homepage:      https://github.com/basvandijk/bindings-levmar/
+homepage:      https://github.com/basvandijk/bindings-levmar
 bug-reports:   https://github.com/basvandijk/bindings-levmar/issues
 category:      Numerical, FFI
 synopsis:      Low level bindings to the C levmar (Levenberg-Marquardt) library
