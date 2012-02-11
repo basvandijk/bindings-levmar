@@ -132,8 +132,14 @@ import Prelude           ( Num, Fractional, Double, Float, String )
 import Prelude           ( negate, fromInteger, fromRational )
 #endif
 
-import Data.Int          ( Int )
 import System.IO         ( IO )
+
+import Foreign.C.Types   ( CInt
+#if __GLASGOW_HASKELL__ >= 704
+                               (..)
+#endif
+                         )
+
 import Foreign.Ptr       ( Ptr, FunPtr, freeHaskellFunPtr )
 import Control.Exception ( bracket )
 
@@ -200,10 +206,10 @@ type Info              = Ptr
 type Work              = Ptr
 type Covar             = Ptr
 type AData             = Ptr ()
-type NrOfParameters    = Int
-type NrOfMeasurements  = Int
-type NrOfConstraints   = Int
-type MaxIterations     = Int
+type NrOfParameters    = CInt
+type NrOfMeasurements  = CInt
+type NrOfConstraints   = CInt
+type MaxIterations     = CInt
 
 
 --------------------------------------------------------------------------------
@@ -248,7 +254,7 @@ type LevMarDer r =  FunPtr (Model r)
                  -> Work r
                  -> Covar r
                  -> AData
-                 -> IO Int
+                 -> IO CInt
 
 type LevMarDif r =  FunPtr (Model r)
                  -> Parameters r
@@ -261,7 +267,7 @@ type LevMarDif r =  FunPtr (Model r)
                  -> Work r
                  -> Covar r
                  -> AData
-                 -> IO Int
+                 -> IO CInt
 
 type LevMarBCDer r =  FunPtr (Model r)
                    -> FunPtr (Jacobian r)
@@ -277,7 +283,7 @@ type LevMarBCDer r =  FunPtr (Model r)
                    -> Work r
                    -> Covar r
                    -> AData
-                   -> IO Int
+                   -> IO CInt
 
 type LevMarBCDif r =  FunPtr (Model r)
                    -> Parameters r
@@ -292,7 +298,7 @@ type LevMarBCDif r =  FunPtr (Model r)
                    -> Work r
                    -> Covar r
                    -> AData
-                   -> IO Int
+                   -> IO CInt
 
 type LevMarLecDer r =  FunPtr (Model r)
                     -> FunPtr (Jacobian r)
@@ -309,7 +315,7 @@ type LevMarLecDer r =  FunPtr (Model r)
                     -> Work r
                     -> Covar r
                     -> AData
-                    -> IO Int
+                    -> IO CInt
 
 type LevMarLecDif r =  FunPtr (Model r)
                     -> Parameters r
@@ -325,7 +331,7 @@ type LevMarLecDif r =  FunPtr (Model r)
                     -> Work r
                     -> Covar r
                     -> AData
-                    -> IO Int
+                    -> IO CInt
 
 type LevMarBLecDer r =  FunPtr (Model r)
                      -> FunPtr (Jacobian r)
@@ -345,7 +351,7 @@ type LevMarBLecDer r =  FunPtr (Model r)
                      -> Work r
                      -> Covar r
                      -> AData
-                     -> IO Int
+                     -> IO CInt
 
 type LevMarBLecDif r =  FunPtr (Model r)
                      -> Parameters r
@@ -364,7 +370,7 @@ type LevMarBLecDif r =  FunPtr (Model r)
                      -> Work r
                      -> Covar r
                      -> AData
-                     -> IO Int
+                     -> IO CInt
 
 
 --------------------------------------------------------------------------------
@@ -412,7 +418,7 @@ type LevMarChkJac r =  FunPtr (Model r)
 -- Utils
 --------------------------------------------------------------------------------
 
-type BestFitParameterIx = Int
+type BestFitParameterIx = CInt
 
 -- | Standard deviation.
 type LevMarStddev r =  Covar r
@@ -435,7 +441,7 @@ type LevMarR2 r =  FunPtr (Model r)
                 -> NrOfMeasurements
                 -> AData
                 -> Result r
-                -> IO Int
+                -> IO CInt
 
 type Result = Ptr
 
