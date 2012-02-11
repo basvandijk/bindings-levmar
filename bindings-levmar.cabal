@@ -5,7 +5,7 @@ build-type:    Simple
 stability:     provisional
 author:        Roel van Dijk <vandijk.roel@gmail.com> & Bas van Dijk <v.dijk.bas@gmail.com>
 maintainer:    Roel van Dijk <vandijk.roel@gmail.com> & Bas van Dijk <v.dijk.bas@gmail.com>
-copyright:     2009–2011 Roel van Dijk & Bas van Dijk
+copyright:     2009–2012 Roel van Dijk & Bas van Dijk
 license:       OtherLicense
 license-file:  LICENSE
 homepage:      https://github.com/basvandijk/bindings-levmar
