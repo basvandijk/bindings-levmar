@@ -11,9 +11,8 @@
 -- Maintainer  :  vandijk.roel@gmail.com, v.dijk.bas@gmail.com
 -- Stability   :  Experimental
 --
--- A low level binding to the C levmar (Levenberg-Marquardt) library.
---
--- For documentation see: <http://www.ics.forth.gr/~lourakis/levmar/>
+-- A low level binding to the
+-- <http://www.ics.forth.gr/~lourakis/levmar/ C levmar (Levenberg-Marquardt) library>.
 --
 --------------------------------------------------------------------------------
 

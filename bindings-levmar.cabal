@@ -32,11 +32,10 @@ description:   See the @levmar@ package for a high-level wrapper
                variants are included.  All functions have Double and
                Float variants.
                .
-               See: <http://www.ics.forth.gr/~lourakis/levmar/>
-               .
-	       Note that the included C library is lightly patched to
-	       make it pure. This way the functions can be used inside
-	       @unsafePerformIO@.
+	       Note that the included
+               <http://www.ics.forth.gr/~lourakis/levmar/ C library>
+               is lightly patched to make it pure. This way the
+               functions can be used inside @unsafePerformIO@.
 	       .
                A note regarding the license:
                .
