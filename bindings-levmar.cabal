@@ -65,10 +65,12 @@ extra-source-files: README.markdown
 flag mkl
   description: Link with Intel's MKL optimized libraries.
   default:     False
+  manual:      True
 
 flag accelerate
   description: Use the accelerate framework for LAPACK/BLAS on OS X
   default:     False
+  manual:      True
 
 source-repository head
   type: git
