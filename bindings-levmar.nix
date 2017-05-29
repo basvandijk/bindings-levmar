@@ -1,15 +1,11 @@
-{ cabal, bindingsDSL, blas, liblapack }:
-
-cabal.mkDerivation (self: {
+{ mkDerivation, base, bindings-DSL, pkgs, stdenv }:
+mkDerivation {
   pname = "bindings-levmar";
-  version = "1.1.0.2";
+  version = "HEAD";
   src = ./.;
-  buildDepends = [ bindingsDSL ];
-  extraLibraries = [ blas liblapack ];
-  meta = {
-    homepage = "https://github.com/basvandijk/bindings-levmar";
-    description = "Low level bindings to the C levmar (Levenberg-Marquardt) library";
-    license = "unknown";
-    platforms = self.ghc.meta.platforms;
-  };
-})
+  libraryHaskellDepends = [ base bindings-DSL ];
+  librarySystemDepends = with pkgs; [ blas liblapack ];
+  homepage = "https://github.com/basvandijk/bindings-levmar";
+  description = "Low level bindings to the C levmar (Levenberg-Marquardt) library";
+  license = "unknown";
+}
