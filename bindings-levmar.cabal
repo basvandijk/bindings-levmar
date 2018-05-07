@@ -1,5 +1,5 @@
 name:          bindings-levmar
-version:       1.1.0.4
+version:       1.1.0.5
 cabal-version: >= 1.6
 build-type:    Simple
 stability:     provisional
@@ -77,8 +77,8 @@ source-repository head
   location: git://github.com/basvandijk/bindings-levmar.git
 
 library
-  build-depends: base         >= 3      && < 4.11
-               , bindings-DSL >= 1.0.15 && < 1.1
+  build-depends: base         >= 3 && < 5
+               , bindings-DSL >= 1.0.15
   exposed-modules: Bindings.LevMar
   ghc-options: -Wall
   cc-options: -D_OPENMP
